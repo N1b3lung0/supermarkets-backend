@@ -24,7 +24,7 @@ All conventions follow [`CLAUDE.md`](CLAUDE.md). Every step produces **working, 
 
 | Phase | File | Steps | Status |
 |---|---|---|---|
-| **Phase 0** — Project Foundation | [PHASE-00-foundation.md](docs/roadmap/PHASE-00-foundation.md) | 1–10 | ⬜ |
+| **Phase 0** — Project Foundation | [PHASE-00-foundation.md](docs/roadmap/PHASE-00-foundation.md) | 1–10 | ✅ |
 | **Phase 1** — Supermarket BC | [PHASE-01-supermarket.md](docs/roadmap/PHASE-01-supermarket.md) | 11–22 | ⬜ |
 | **Phase 2** — Category BC | [PHASE-02-category.md](docs/roadmap/PHASE-02-category.md) | 23–30 | ⬜ |
 | **Phase 3** — Product BC | [PHASE-03-product.md](docs/roadmap/PHASE-03-product.md) | 31–46 | ⬜ |
