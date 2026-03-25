@@ -23,6 +23,7 @@ spring-boot-actuator        = { module = "org.springframework.boot:spring-boot-s
 spring-boot-devtools        = { module = "org.springframework.boot:spring-boot-devtools" }
 
 # Database
+spring-boot-flyway          = { module = "org.springframework.boot:spring-boot-flyway",      version.ref = "spring-boot" }
 flyway-core                 = { module = "org.flywaydb:flyway-core",                        version.ref = "flyway" }
 flyway-postgres             = { module = "org.flywaydb:flyway-database-postgresql",         version.ref = "flyway" }
 postgresql                  = { module = "org.postgresql:postgresql",                        version.ref = "postgresql" }
@@ -48,7 +49,7 @@ testcontainers-pg           = { module = "org.testcontainers:postgresql",       
 
 [bundles]
 spring-web          = ["spring-boot-web", "spring-boot-validation", "spring-boot-actuator"]
-spring-data         = ["spring-boot-jpa", "flyway-core", "flyway-postgres"]
+spring-data         = ["spring-boot-jpa", "spring-boot-flyway", "flyway-core", "flyway-postgres"]
 observability       = ["micrometer-otlp", "micrometer-tracing-otel", "logstash-logback-encoder"]
 testing             = ["spring-boot-test", "archunit"]
 testcontainers      = ["testcontainers-junit", "testcontainers-pg"]
