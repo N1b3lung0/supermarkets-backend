@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+    "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<!--
+  Checkstyle configuration for the Supermarkets project.
+  Rules: no star imports, 120-char line limit, no empty catch blocks.
+  Formatting is delegated to Spotless (googleJavaFormat), so purely
+  style-related checks are omitted here to avoid conflicts.
+-->
+<module name="Checker">
+
+    <property name="severity" value="error"/>
+    <property name="fileExtensions" value="java"/>
+
+    <!-- Suppress checkstyle on generated sources -->
+    <module name="SuppressionFilter">
+        <property name="file" value="${config_loc}/suppressions.xml" default=""/>
+        <property name="optional" value="true"/>
+    </module>
+
+    <!-- ===== File-level checks ===== -->
+
+    <!-- No tab characters -->
+    <module name="FileTabCharacter">
+        <property name="eachLine" value="true"/>
+    </module>
+
+    <!-- Files must end with a newline -->
+    <module name="NewlineAtEndOfFile"/>
+
+    <!-- 120-character line limit (Checker-level, not TreeWalker) -->
+    <module name="LineLength">
+        <property name="max" value="120"/>
+        <!-- Allow long @SuppressWarnings, URLs and package/import declarations -->
+        <property name="ignorePattern"
+                  value="^(package|import|.*//.*https?://).*$"/>
+    </module>
+
+    <!-- ===== Tree-walker checks (per-token) ===== -->
+    <module name="TreeWalker">
+
+        <!-- No wildcard imports -->
+        <module name="AvoidStarImport"/>
+
+        <!-- No unused imports (Spotless handles removal, this is a safety net) -->
+        <module name="UnusedImports"/>
+
+        <!-- No empty catch blocks -->
+        <module name="EmptyCatchBlock">
+            <property name="exceptionVariableName" value="expected|ignore|ignored"/>
+        </module>
+
+        <!-- No empty blocks (if, else, try, etc.) other than catch -->
+        <module name="EmptyBlock">
+            <property name="option" value="TEXT"/>
+            <property name="tokens"
+                      value="LITERAL_WHILE, LITERAL_TRY, LITERAL_FINALLY,
+                             LITERAL_DO, LITERAL_IF, LITERAL_ELSE,
+                             LITERAL_FOR, INSTANCE_INIT, STATIC_INIT,
+                             LITERAL_SWITCH, LITERAL_SYNCHRONIZED"/>
+        </module>
+
+        <!-- Braces required for all control structures -->
+        <module name="NeedBraces"/>
+
+        <!-- Modifier order: public, protected, private, abstract, static, final… -->
+        <module name="ModifierOrder"/>
+
+        <!-- Redundant modifiers (e.g. public on interface methods) -->
+        <module name="RedundantModifier"/>
+
+        <!-- No multiple variable declarations on the same line -->
+        <module name="MultipleVariableDeclarations"/>
+
+        <!-- One statement per line -->
+        <module name="OneStatementPerLine"/>
+
+        <!-- No trailing whitespace -->
+        <module name="Regexp">
+            <property name="format" value="[ \t]+$"/>
+            <property name="illegalPattern" value="true"/>
+            <property name="message" value="Trailing whitespace"/>
+        </module>
+
+        <!-- Suppress checks on Lombok-generated code via @SuppressWarnings -->
+        <module name="SuppressWarningsHolder"/>
+    </module>
+
+    <module name="SuppressWarningsFilter"/>
+
+</module>
+
