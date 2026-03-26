@@ -36,7 +36,7 @@ See also: [Category level mapping](APPENDIX.md#category-level-mapping)
 
 ---
 
-### Step 23 ⬜ — Define Category domain model
+### Step 23 ✅ — Define Category domain model
 - Create `category/domain/model/CategoryId.java` (record, UUID)
 - Create `category/domain/model/ExternalCategoryId.java` (record — wraps the Mercadona integer id as `String`, e.g. `"12"`, `"112"`, `"420"`)
 - Create `category/domain/model/CategoryName.java` (record, non-blank, max 255)
@@ -56,13 +56,13 @@ See also: [Category level mapping](APPENDIX.md#category-level-mapping)
   - `pullDomainEvents()`
 - **Verify:** unit tests on `create()` + `update()` — happy path, invariants, `isLeaf()` returns correct value per level
 
-### Step 24 ⬜ — Category domain events + exceptions
+### Step 24 ✅ — Category domain events + exceptions
 - Create `category/domain/event/CategoryEvent.java` (sealed interface — `permits CategorySynced`)
 - Create `category/domain/event/CategorySynced.java` (record — `CategoryId id`, `ExternalCategoryId externalId`, `SupermarketId supermarketId`, `CategoryLevel level`, `Instant occurredOn`)
 - Create `category/domain/exception/CategoryNotFoundException.java` (extends `NotFoundException`)
 - **Verify:** unit test asserting `Category.create()` emits `CategorySynced` with correct level
 
-### Step 25 ⬜ — Category output ports + DTOs
+### Step 25 ✅ — Category output ports + DTOs
 - Create `category/application/port/output/CategoryRepositoryPort.java`
   - `save(Category)`, `findById(CategoryId)`, `findByExternalIdAndSupermarket(ExternalCategoryId, SupermarketId)`, `deleteById(CategoryId)`
 - Create `category/application/port/output/CategoryQueryPort.java`
@@ -73,7 +73,7 @@ See also: [Category level mapping](APPENDIX.md#category-level-mapping)
 - Create `category/application/dto/CategorySummaryView.java` (record — `id`, `externalId`, `name`, `level`, `supermarketId`, `parentCategoryId` nullable)
 - **Verify:** compile only
 
-### Step 26 ⬜ — Upsert Category use case (command)
+### Step 26 ✅ — Upsert Category use case (command)
 - Create `category/application/port/input/command/UpsertCategoryUseCase.java`
 - Create `category/application/dto/UpsertCategoryCommand.java` (record):
   ```
@@ -86,12 +86,12 @@ See also: [Category level mapping](APPENDIX.md#category-level-mapping)
   - Always emits `CategorySynced` on create; only on actual change on update
 - **Verify:** unit tests — create level-0, create level-1 with parent, create level-2 with parent, update name (event emitted), update with same data (no event)
 
-### Step 27 ⬜ — Get Category + List Categories use cases (query)
+### Step 27 ✅ — Get Category + List Categories use cases (query)
 - Create `category/application/port/input/query/GetCategoryByIdUseCase.java` + `GetCategoryByIdQuery.java` + `GetCategoryByIdHandler.java` (returns `CategoryDetailView` with children)
 - Create `category/application/port/input/query/ListTopCategoriesBySupermarketUseCase.java` + `ListTopCategoriesBySupermarketQuery.java` + `ListTopCategoriesBySupermarketHandler.java` (level-0 only, paginated)
 - **Verify:** unit tests with mocked `CategoryQueryPort` — found, not found (`CategoryNotFoundException`), paginated list
 
-### Step 28 ⬜ — Category JPA Entity + Flyway migration
+### Step 28 ✅ — Category JPA Entity + Flyway migration
 - Create `V4__create_categories_table.sql`:
   ```sql
   CREATE TABLE categories (
@@ -117,7 +117,7 @@ See also: [Category level mapping](APPENDIX.md#category-level-mapping)
   - `@EntityListeners(AuditingEntityListener.class)`
 - **Verify:** Flyway migration runs clean; JPA schema validates
 
-### Step 29 ⬜ — Category persistence mapper + Spring repository + JPA adapter
+### Step 29 ✅ — Category persistence mapper + Spring repository + JPA adapter
 - Create `SpringCategoryRepository.java`:
   - `findByExternalIdAndSupermarketId(String, UUID)` → `Optional<CategoryEntity>`
   - `findByExternalIdAndSupermarketIdAndLevel(String, UUID, int)` → to safely resolve parent refs
@@ -128,7 +128,7 @@ See also: [Category level mapping](APPENDIX.md#category-level-mapping)
   - `findDetailById`: loads entity + children via `@OneToMany(mappedBy = "parent")` with `@EntityGraph`
 - **Verify:** `@DataJpaTest` + Testcontainers — upsert level-0, upsert level-1 with parent, upsert level-2; query leaf categories; soft delete
 
-### Step 30 ⬜ — Category Config + REST controller
+### Step 30 ✅ — Category Config + REST controller
 - Create `CategoryConfig.java` (bean registration with `TransactionTemplate`)
 - Create `CategoryController.java`:
   - `GET /api/v1/supermarkets/{supermarketId}/categories?page=0&size=20` → `PageResponse<CategorySummaryView>` (top-level only)
