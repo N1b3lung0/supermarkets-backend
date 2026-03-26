@@ -47,7 +47,7 @@ See also: [Database Schema](APPENDIX.md#database-schema-overview)
 
 ---
 
-### Step 31 ⬜ — Define Product core Value Objects
+### Step 31 ✅ — Define Product core Value Objects
 - Create `product/domain/model/ProductId.java` (record, UUID)
 - Create `product/domain/model/ExternalProductId.java` (record, non-blank String — Mercadona uses `"3400"`, other supermarkets may use different formats)
 - Create `product/domain/model/ProductName.java` (record, non-blank, max 255 — maps to `display_name`)
@@ -60,7 +60,7 @@ See also: [Database Schema](APPENDIX.md#database-schema-overview)
 - Create `product/domain/model/ProductThumbnailUrl.java` (record, nullable, max 1000)
 - **Verify:** unit tests on each Value Object constructor — null/blank/length invariants
 
-### Step 32 ⬜ — Define Product detail Value Objects
+### Step 32 ✅ — Define Product detail Value Objects
 - Create `product/domain/model/StorageInstructions.java` (record, nullable, max 500)
 - Create `product/domain/model/UsageInstructions.java` (record, nullable, max 500)
 - Create `product/domain/model/MandatoryMentions.java` (record, nullable, max 1000)
@@ -72,7 +72,7 @@ See also: [Database Schema](APPENDIX.md#database-schema-overview)
 - Create `product/domain/model/ProductBadges.java` (record — `boolean isWater`, `boolean requiresAgeCheck`)
 - **Verify:** unit tests on constructors; `ProductBadges` — both `false` by default in `create()`
 
-### Step 33 ⬜ — Define Price Value Objects
+### Step 33 ✅ — Define Price Value Objects
 - Create `shared/domain/model/Money.java` (record — `BigDecimal amount`, `String currency` ISO-4217, amount non-negative)
   - `add(Money other)` — throws `BusinessRuleViolationException` on currency mismatch
 - Create `product/domain/model/PriceInstructions.java` (record — the entire `price_instructions` block):
@@ -95,7 +95,7 @@ See also: [Database Schema](APPENDIX.md#database-schema-overview)
 - Create `product/domain/model/SellingMethod.java` (enum: `UNIT(0)`, `WEIGHT(2)` — maps to `selling_method` integer from API; `fromCode(int)` factory)
 - **Verify:** unit tests on `Money` — add, currency mismatch, negative; `SellingMethod.fromCode()` — valid + unknown code
 
-### Step 34 ⬜ — Define Product Aggregate Root
+### Step 34 ✅ — Define Product Aggregate Root
 - Create `product/domain/model/Product.java` (Aggregate Root)
   - Identity: `ProductId id`, `ExternalProductId externalId`, `SupermarketId supermarketId`
   - Core: `ProductName name`, `LegalName legalName`, `ProductDescription description`, `Brand brand`, `Ean ean`
@@ -116,7 +116,7 @@ See also: [Database Schema](APPENDIX.md#database-schema-overview)
   - `update()` — changed fields updated, event emitted; unchanged → no event
   - `deactivate()` — already inactive is a no-op (no event emitted twice)
 
-### Step 35 ⬜ — Product domain events + exceptions
+### Step 35 ✅ — Product domain events + exceptions
 - Create `product/domain/event/ProductEvent.java` (sealed interface — `permits ProductSynced, ProductDeactivated`)
 - Create `product/domain/event/ProductSynced.java` (record — `ProductId productId`, `ExternalProductId externalId`, `SupermarketId supermarketId`, `Instant occurredOn`)
 - Create `product/domain/event/ProductDeactivated.java` (record — `ProductId productId`, `SupermarketId supermarketId`, `Instant occurredOn`)
@@ -124,7 +124,7 @@ See also: [Database Schema](APPENDIX.md#database-schema-overview)
 - Create `product/domain/exception/DuplicateProductException.java` (extends `ConflictException`)
 - **Verify:** unit tests asserting correct parent class and message format
 
-### Step 36 ⬜ — Define ProductPrice Aggregate (price history)
+### Step 36 ✅ — Define ProductPrice Aggregate (price history)
 - Create `product/domain/model/ProductPriceId.java` (record, UUID)
 - Create `product/domain/model/ProductPrice.java` (Aggregate Root — immutable snapshot of prices at a given point in time):
   - `ProductPriceId id`
@@ -136,13 +136,13 @@ See also: [Database Schema](APPENDIX.md#database-schema-overview)
 - Design rationale: storing the entire `PriceInstructions` as a record preserves the complete price context (unit price, bulk price, VAT, selling method, previous price) for historical analysis
 - **Verify:** unit tests — happy path, null `productId` throws, null `priceInstructions` throws
 
-### Step 37 ⬜ — ProductPrice domain events + exceptions
+### Step 37 ✅ — ProductPrice domain events + exceptions
 - Create `product/domain/event/ProductPriceEvent.java` (sealed interface — `permits ProductPriceRecorded`)
 - Create `product/domain/event/ProductPriceRecorded.java` (record — `ProductPriceId id`, `ProductId productId`, `Money unitPrice`, `Money bulkPrice` nullable, `Instant recordedAt`)
 - Create `product/domain/exception/ProductPriceNotFoundException.java` (extends `NotFoundException`)
 - **Verify:** unit test asserting `ProductPrice.create()` emits `ProductPriceRecorded` with correct prices extracted from `PriceInstructions`
 
-### Step 38 ⬜ — Product + ProductPrice output ports + DTOs
+### Step 38 ✅ — Product + ProductPrice output ports + DTOs
 - Create `product/application/port/output/ProductRepositoryPort.java`
   - `save(Product)`, `findById(ProductId)`, `findByExternalIdAndSupermarket(ExternalProductId, SupermarketId)`, `findActiveExternalIdsBySupermarket(SupermarketId)`, `deleteById(ProductId)`
 - Create `product/application/port/output/ProductQueryPort.java`
@@ -158,7 +158,7 @@ See also: [Database Schema](APPENDIX.md#database-schema-overview)
   - `product/application/dto/SupplierView.java` (record — `name`)
 - **Verify:** compile only
 
-### Step 39 ⬜ — Upsert Product use case (command)
+### Step 39 ✅ — Upsert Product use case (command)
 - Create `product/application/port/input/command/UpsertProductUseCase.java`
 - Create `product/application/dto/UpsertProductCommand.java` (record — mirrors all `Product` fields + `PriceInstructions priceInstructions`; this is populated by the scraper from the API JSON):
   ```
@@ -177,14 +177,14 @@ See also: [Database Schema](APPENDIX.md#database-schema-overview)
   - Existing product, nothing changed: not saved + price recorded + no `ProductSynced`
   - Existing product, price changed: not saved (product unchanged) + price recorded
 
-### Step 40 ⬜ — Deactivate Product use case (command)
+### Step 40 ✅ — Deactivate Product use case (command)
 - Create `product/application/port/input/command/DeactivateProductUseCase.java`
 - Create `product/application/dto/DeactivateProductCommand.java` (record — `ProductId productId`)
 - Create `product/application/command/DeactivateProductHandler.java`
   - Loads product by ID → calls `product.deactivate()` → saves → publishes `ProductDeactivated`
 - **Verify:** unit tests — happy path + `ProductNotFoundException` when not found + no-op when already inactive (no event published)
 
-### Step 41 ⬜ — Record ProductPrice use case (command)
+### Step 41 ✅ — Record ProductPrice use case (command)
 - Create `product/application/port/input/command/RecordProductPriceUseCase.java`
 - Create `product/application/dto/RecordProductPriceCommand.java` (record — `ProductId productId`, `PriceInstructions priceInstructions`)
 - Create `product/application/command/RecordProductPriceHandler.java`
@@ -192,21 +192,21 @@ See also: [Database Schema](APPENDIX.md#database-schema-overview)
   - Saves + publishes `ProductPriceRecorded`
 - **Verify:** unit tests — price recorded, event emitted; called twice creates two history records
 
-### Step 42 ⬜ — Get Product + List Products use cases (query)
+### Step 42 ✅ — Get Product + List Products use cases (query)
 - Create `product/application/port/input/query/GetProductByIdUseCase.java` + `GetProductByIdQuery.java` + `GetProductByIdHandler.java`
   - Returns `ProductDetailView` with latest price joined
 - Create `product/application/port/input/query/ListProductsByCategoryUseCase.java` + `ListProductsByCategoryQuery.java` (record — `CategoryId`, `Pageable`) + `ListProductsByCategoryHandler.java`
 - Create `product/application/port/input/query/ListProductsBySupermarketUseCase.java` + `ListProductsBySupermarketQuery.java` + `ListProductsBySupermarketHandler.java`
 - **Verify:** unit tests — found, not found (`ProductNotFoundException`), paginated results
 
-### Step 43 ⬜ — Get ProductPrice history use case (query)
+### Step 43 ✅ — Get ProductPrice history use case (query)
 - Create `product/application/port/input/query/GetProductPriceHistoryUseCase.java`
 - Create `product/application/dto/GetProductPriceHistoryQuery.java` (record — `ProductId`, `Pageable`)
 - Create `product/application/query/GetProductPriceHistoryHandler.java`
   - Returns `PageResponse<ProductPriceView>` ordered by `recordedAt DESC`
 - **Verify:** unit test with mocked `ProductPriceQueryPort` — pagination respected
 
-### Step 44 ⬜ — Product JPA Entities + Flyway migration
+### Step 44 ✅ — Product JPA Entities + Flyway migration
 - Create `V5__create_products_table.sql`:
   ```sql
   CREATE TABLE products (
@@ -282,7 +282,7 @@ See also: [Database Schema](APPENDIX.md#database-schema-overview)
 - Create `ProductPriceEntity.java`
 - **Verify:** Flyway migrations run clean; JPA schema validation passes
 
-### Step 45 ⬜ — Product persistence mapper + Spring repositories + JPA adapters
+### Step 45 ✅ — Product persistence mapper + Spring repositories + JPA adapters
 - Create `SpringProductRepository.java`:
   - `findByExternalIdAndSupermarketId(String externalId, UUID supermarketId)`
   - `findActiveExternalIdsBySupermarketId(UUID supermarketId)` → `List<String>` (used by sync to detect deactivations)
@@ -300,7 +300,7 @@ See also: [Database Schema](APPENDIX.md#database-schema-overview)
   - Record two prices, verify `findTopByProductId` returns the most recent
   - Paginated history returns both records in correct order
 
-### Step 46 ⬜ — Product Config + REST controllers
+### Step 46 ✅ — Product Config + REST controllers
 - Create `ProductConfig.java` (register all use case beans with `TransactionTemplate` wrapping)
 - Create `ProductController.java`:
   - `GET /api/v1/products/{id}` → `ProductDetailView` with latest price
