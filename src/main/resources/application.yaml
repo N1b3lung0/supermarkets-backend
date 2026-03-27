@@ -35,3 +35,8 @@ management:
     health:
       show-details: when_authorized
 
+app:
+  scraper:
+    mercadona:
+      base-url: https://tienda.mercadona.es/api
+      request-timeout: 10s
