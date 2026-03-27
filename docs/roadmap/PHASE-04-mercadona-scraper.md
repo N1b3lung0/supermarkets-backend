@@ -38,7 +38,7 @@ See also: [Mercadona API Response Structure](APPENDIX.md#mercadona-api-response-
 
 ---
 
-### Step 47 ⬜ — Create Mercadona fixture JSON files
+### Step 47 ✅ — Create Mercadona fixture JSON files
 - Save `https://tienda.mercadona.es/api/categories/` response as
   `src/test/resources/fixtures/mercadona/categories.json`
 - Save `https://tienda.mercadona.es/api/categories/112` response (the "Aceite, vinagre y sal" level-1
@@ -49,7 +49,7 @@ See also: [Mercadona API Response Structure](APPENDIX.md#mercadona-api-response-
   (used only if we add the optional enrichment call in Step 52b)
 - **Verify:** all three files exist and are valid JSON parseable by Jackson
 
-### Step 48 ⬜ — Define Mercadona API response DTOs
+### Step 48 ✅ — Define Mercadona API response DTOs
 All DTOs in `mercadona/infrastructure/adapter/output/scraper/dto/`
 
 **From `GET /api/categories/`:**
@@ -131,7 +131,7 @@ Use `@JsonProperty` for snake_case → camelCase on all DTOs.
 - **Verify:** unit test deserializing `product_3400.json` into `MercadonaProductDetailDto`:
   - Assert `isBulk=true`, `isVariableWeight=true`, 8 suppliers, `ean="2105100034004"`
 
-### Step 49 ⬜ — Define ScraperPort output ports
+### Step 49 ✅ — Define ScraperPort output ports
 - Create `mercadona/application/port/output/scraper/CategoryScraperPort.java`:
   ```java
   // Returns all 3 levels of UpsertCategoryCommand (TOP, SUBCATEGORY, LEAF)
@@ -150,7 +150,7 @@ Use `@JsonProperty` for snake_case → camelCase on all DTOs.
   sync handler after categories are persisted, so the scraper can set the correct `categoryId` on each product.
 - **Verify:** compile only
 
-### Step 50 ⬜ — Configure RestClient bean for Mercadona
+### Step 50 ✅ — Configure RestClient bean for Mercadona
 - Create `mercadona/infrastructure/config/MercadonaScraperConfig.java`:
   - `@Bean RestClient mercadonaRestClient(MercadonaScraperProperties props)` with:
     - `baseUrl(props.baseUrl())`
@@ -168,7 +168,7 @@ Use `@JsonProperty` for snake_case → camelCase on all DTOs.
   ```
 - **Verify:** `./gradlew bootRun` starts; bean wired correctly
 
-### Step 51 ⬜ — Implement MercadonaCategoryScraperAdapter
+### Step 51 ✅ — Implement MercadonaCategoryScraperAdapter
 - Create `mercadona/infrastructure/adapter/output/scraper/MercadonaCategoryScraperAdapter.java`
   implements `CategoryScraperPort`
   - `GET /categories/` → deserialize `MercadonaCategoriesResponse`
@@ -184,7 +184,7 @@ Use `@JsonProperty` for snake_case → camelCase on all DTOs.
   - Assert SUBCATEGORY command for id=112 has `parentExternalId="12"`, `level=SUBCATEGORY`
   - Assert LEAF commands for ids 420, 422, 421, 424 have `parentExternalId="112"`, `level=LEAF`
 
-### Step 52 ⬜ — Implement MercadonaProductScraperAdapter
+### Step 52 ✅ — Implement MercadonaProductScraperAdapter
 - Create `mercadona/infrastructure/adapter/output/scraper/MercadonaProductScraperAdapter.java`
   implements `ProductScraperPort`
   - `GET /categories/{level1Id}` → deserialize `MercadonaLevel1DetailDto`
@@ -217,7 +217,7 @@ Use `@JsonProperty` for snake_case → camelCase on all DTOs.
   - Assert product "4241": `iva=null` (null case handled without NPE)
   - Assert `legalName`, `ean`, `isBulk` are all `null` (not available in categories endpoint)
 
-### Step 52b ⬜ — (Optional) Enrich Product via `/api/products/{id}`
+### Step 52b ✅ — (Optional) Enrich Product via `/api/products/{id}`
 - Create `mercadona/infrastructure/adapter/output/scraper/MercadonaProductEnrichmentAdapter.java`
   - `GET /products/{externalId}` → deserialize `MercadonaProductDetailDto`
   - Returns an `EnrichProductCommand` with the fields absent from the categories endpoint:
@@ -230,4 +230,3 @@ Use `@JsonProperty` for snake_case → camelCase on all DTOs.
 - This step is **optional for the initial sync** — run it as a background job after the main sync completes
   to avoid rate-limiting (one HTTP call per product × ~10,000 products)
 - **Verify:** unit test on `EnrichProductHandler` — fields updated, no-op when unchanged
-

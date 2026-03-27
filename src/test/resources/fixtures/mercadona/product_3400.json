@@ -1,0 +1,136 @@
+{
+  "id": "3400",
+  "ean": "2105100034004",
+  "slug": "filetes-pechuga-pollo-corte-fino-minimo-10-filetes-bandeja",
+  "brand": null,
+  "limit": 999,
+  "badges": {
+    "is_water": false,
+    "requires_age_check": false
+  },
+  "origin": "Planta de sacrificio Hijos de Juan Pujante, S.A. ubicada en Espa\u00f1a",
+  "photos": [
+    {
+      "zoom": "https://prod-mercadona.imgix.net/images/c89d28c5929f14861da52e2508912e3d.jpg?fit=crop&h=1600&w=1600",
+      "regular": "https://prod-mercadona.imgix.net/images/c89d28c5929f14861da52e2508912e3d.jpg?fit=crop&h=600&w=600",
+      "thumbnail": "https://prod-mercadona.imgix.net/images/c89d28c5929f14861da52e2508912e3d.jpg?fit=crop&h=300&w=300",
+      "perspective": 1
+    },
+    {
+      "zoom": "https://prod-mercadona.imgix.net/images/771cb120fe912d5b70838430eb0bc8b3.jpg?fit=crop&h=1600&w=1600",
+      "regular": "https://prod-mercadona.imgix.net/images/771cb120fe912d5b70838430eb0bc8b3.jpg?fit=crop&h=600&w=600",
+      "thumbnail": "https://prod-mercadona.imgix.net/images/771cb120fe912d5b70838430eb0bc8b3.jpg?fit=crop&h=300&w=300",
+      "perspective": 9
+    },
+    {
+      "zoom": "https://prod-mercadona.imgix.net/images/772581eb39a2a3e9ade61f0f39d5ecc5.jpg?fit=crop&h=1600&w=1600",
+      "regular": "https://prod-mercadona.imgix.net/images/772581eb39a2a3e9ade61f0f39d5ecc5.jpg?fit=crop&h=600&w=600",
+      "thumbnail": "https://prod-mercadona.imgix.net/images/772581eb39a2a3e9ade61f0f39d5ecc5.jpg?fit=crop&h=300&w=300",
+      "perspective": 9
+    }
+  ],
+  "status": null,
+  "details": {
+    "brand": null,
+    "origin": "Planta de sacrificio Hijos de Juan Pujante, S.A. ubicada en Espa\u00f1a",
+    "suppliers": [
+      {
+        "name": "AVICOLA DE LLEIDA S.A.U."
+      },
+      {
+        "name": "Avinatur Producciones Av\u00edcolas, S.L.U."
+      },
+      {
+        "name": "Av\u00edcola de Galicia, S.A.U."
+      },
+      {
+        "name": "DOLZ ESPA\u00d1A SL"
+      },
+      {
+        "name": "HIJOS DE JUAN PUJANTE S.A."
+      },
+      {
+        "name": "INASUR"
+      },
+      {
+        "name": "UVE, S.A."
+      },
+      {
+        "name": "Vall Companys"
+      }
+    ],
+    "legal_name": "Filetes filetados de pechuga de pollo",
+    "description": "Filetes pechuga de pollo corte fino m\u00ednimo 10 filetes",
+    "counter_info": null,
+    "danger_mentions": "",
+    "alcohol_by_volume": null,
+    "mandatory_mentions": "Producto fresco. Categor\u00eda A. Envasado en atm\u00f3sfera protectora.",
+    "production_variant": "La unidad puede pesar entre 0,450-0,750 kg.",
+    "usage_instructions": "Cocinar completamente (75\u00ba C) antes de su consumo",
+    "storage_instructions": "Conservar entre 0 y 4C. Una vez abierto consumir en 24 horas."
+  },
+  "is_bulk": true,
+  "packaging": "Bandeja",
+  "published": true,
+  "share_url": "https://tienda.mercadona.es/product/3400/filetes-pechuga-pollo-corte-fino-minimo-10-filetes-bandeja",
+  "thumbnail": "https://prod-mercadona.imgix.net/images/c89d28c5929f14861da52e2508912e3d.jpg?fit=crop&h=300&w=300",
+  "categories": [
+    {
+      "id": 3,
+      "name": "Carne",
+      "level": 0,
+      "order": 17,
+      "categories": [
+        {
+          "id": 38,
+          "name": "Aves y pollo",
+          "level": 1,
+          "order": 17,
+          "categories": [
+            {
+              "id": 281,
+              "name": "Pollo",
+              "level": 2,
+              "order": 17
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "extra_info": [
+    null
+  ],
+  "display_name": "Filetes pechuga de pollo corte fino",
+  "unavailable_from": null,
+  "is_variable_weight": true,
+  "price_instructions": {
+    "iva": 10,
+    "is_new": false,
+    "is_pack": false,
+    "pack_size": null,
+    "unit_name": null,
+    "unit_size": 0.59,
+    "bulk_price": "8.20",
+    "unit_price": "4.84",
+    "approx_size": true,
+    "size_format": "kg",
+    "total_units": null,
+    "unit_selector": true,
+    "bunch_selector": false,
+    "drained_weight": null,
+    "selling_method": 0,
+    "tax_percentage": "10.000",
+    "price_decreased": false,
+    "reference_price": "8.200",
+    "min_bunch_amount": 1.0,
+    "reference_format": "kg",
+    "previous_unit_price": null,
+    "increment_bunch_amount": 1.0
+  },
+  "unavailable_weekdays": [],
+  "nutrition_information": {
+    "allergens": " <strong>x99</strong>.",
+    "ingredients": "100% pollo"
+  }
+}

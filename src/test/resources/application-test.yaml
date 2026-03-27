@@ -4,3 +4,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+
+app:
+  scraper:
+    mercadona:
+      base-url: https://tienda.mercadona.es/api
+      request-timeout: 10s
+
