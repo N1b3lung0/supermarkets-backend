@@ -9,6 +9,7 @@ import com.n1b3lung0.supermarkets.supermarket.domain.model.SupermarketId;
 import com.n1b3lung0.supermarkets.supermarket.domain.model.SupermarketName;
 import com.n1b3lung0.supermarkets.supermarket.infrastructure.adapter.output.persistence.mapper.SupermarketPersistenceMapper;
 import com.n1b3lung0.supermarkets.supermarket.infrastructure.adapter.output.persistence.repository.SpringSupermarketRepository;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,6 +48,12 @@ public class SupermarketJpaAdapter implements SupermarketRepositoryPort, Superma
   @Transactional(readOnly = true)
   public boolean existsByName(SupermarketName name) {
     return repository.countByName(name.value()) > 0;
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<Supermarket> findAllActive() {
+    return repository.findAllActive().stream().map(mapper::toDomain).toList();
   }
 
   // --- SupermarketQueryPort ---
