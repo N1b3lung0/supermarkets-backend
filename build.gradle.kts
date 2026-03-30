@@ -41,6 +41,10 @@ dependencies {
     // OpenAPI / Swagger
     implementation(libs.springdoc.openapi)
 
+    // ShedLock — distributed scheduler lock
+    implementation(libs.shedlock.spring)
+    implementation(libs.shedlock.jdbc)
+
     // Observability
     implementation(libs.bundles.observability)
 

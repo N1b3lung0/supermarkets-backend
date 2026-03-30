@@ -12,17 +12,18 @@
 
 ---
 
-### Step 60 ⬜ — Add Spring Scheduler configuration
+### Step 60 ✅ — Add Spring Scheduler configuration
 - Enable `@EnableScheduling` in a `SchedulerConfig.java` within `sync/infrastructure/config/`
 - Create `sync/infrastructure/adapter/input/scheduler/DailySyncScheduler.java`
   - Cron: every day at 03:00 Europe/Madrid (`0 0 3 * * *` with `zone = "Europe/Madrid"`)
   - Iterates over all active supermarkets and triggers `SyncSupermarketCatalogUseCase`
 - **Verify:** unit test asserting scheduler calls use case for each supermarket; cron expression validated
 
-### Step 61 ⬜ — Make scheduler configurable + add ShedLock
+### Step 61 ✅ — Make scheduler configurable + add ShedLock
 - Add `shedlock-spring` and `shedlock-provider-jdbc-template` to `libs.versions.toml`
 - Create `V8__create_shedlock_table.sql` (standard ShedLock schema)
 - Annotate scheduler method with `@SchedulerLock(name = "dailySync", lockAtMostFor = "2h")` to prevent concurrent execution on multi-instance deployments
 - Add `app.scheduler.sync.enabled=true` property; use `@ConditionalOnProperty` to disable in tests
-- **Verify:** `@DataJpaTest` confirming ShedLock table created; scheduler disabled in test profile via `app.scheduler.sync.enabled=false`
+- Added `SupermarketRepositoryPort.findAllActive()` + implementation in `SupermarketJpaAdapter`
+- **Verify:** `ShedLockMigrationTest` confirms `shedlock` table + columns exist; `DailySyncSchedulerTest` covers: 2 supermarkets → 2 use case calls, empty list → no calls, one failure → continues with rest; scheduler disabled in test profile via `app.scheduler.sync.enabled=false`
 

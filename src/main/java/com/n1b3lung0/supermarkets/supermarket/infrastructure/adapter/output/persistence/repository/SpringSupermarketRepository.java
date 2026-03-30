@@ -1,6 +1,7 @@
 package com.n1b3lung0.supermarkets.supermarket.infrastructure.adapter.output.persistence.repository;
 
 import com.n1b3lung0.supermarkets.supermarket.infrastructure.adapter.output.persistence.entity.SupermarketEntity;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,14 @@ public interface SpringSupermarketRepository extends JpaRepository<SupermarketEn
             ORDER BY s.name ASC
             """)
   Page<SupermarketEntity> findAllActive(Pageable pageable);
+
+  @Query(
+      """
+            SELECT s FROM SupermarketEntity s
+            WHERE s.deletedAt IS NULL
+            ORDER BY s.name ASC
+            """)
+  List<SupermarketEntity> findAllActive();
 
   @Query("SELECT s FROM SupermarketEntity s WHERE s.id = :id AND s.deletedAt IS NULL")
   java.util.Optional<SupermarketEntity> findActiveById(UUID id);

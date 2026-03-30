@@ -40,3 +40,6 @@ app:
     mercadona:
       base-url: https://tienda.mercadona.es/api
       request-timeout: 10s
+  scheduler:
+    sync:
+      enabled: true
