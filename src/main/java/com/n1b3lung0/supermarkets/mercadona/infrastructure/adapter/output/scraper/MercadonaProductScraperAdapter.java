@@ -2,13 +2,13 @@ package com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scrap
 
 import com.n1b3lung0.supermarkets.category.domain.model.CategoryId;
 import com.n1b3lung0.supermarkets.category.domain.model.ExternalCategoryId;
-import com.n1b3lung0.supermarkets.mercadona.application.port.output.scraper.ProductScraperPort;
 import com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scraper.dto.MercadonaLevel1DetailDto;
 import com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scraper.dto.MercadonaProductInCategoryDto;
 import com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scraper.mapper.MercadonaPriceInstructionsMapper;
 import com.n1b3lung0.supermarkets.product.application.dto.UpsertProductCommand;
 import com.n1b3lung0.supermarkets.shared.infrastructure.exception.ExternalServiceException;
 import com.n1b3lung0.supermarkets.supermarket.domain.model.SupermarketId;
+import com.n1b3lung0.supermarkets.sync.application.port.output.scraper.ProductScraperPort;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +20,7 @@ import org.springframework.web.client.RestClientException;
 /**
  * Fetches all products within a level-1 subcategory and maps them to {@link UpsertProductCommand}.
  * Fields not available in the categories endpoint (ean, legalName, brand, origin, details,
- * allergens, ingredients, isBulk, isVariableWeight) are set to null and can be enriched later via
- * Step 52b.
+ * allergens, ingredients, isBulk, isVariableWeight) are set to null.
  */
 public class MercadonaProductScraperAdapter implements ProductScraperPort {
 
@@ -97,25 +96,25 @@ public class MercadonaProductScraperAdapter implements ProductScraperPort {
         supermarketId.value(),
         categoryId.value(),
         dto.displayName(),
-        null, // legalName — not in categories endpoint
-        null, // description — not in categories endpoint
-        null, // brand — not in categories endpoint
-        null, // ean — not in categories endpoint
-        null, // origin — not in categories endpoint
+        null,
+        null,
+        null,
+        null,
+        null,
         dto.packaging(),
         dto.thumbnail(),
-        null, // storageInstructions — not in categories endpoint
-        null, // usageInstructions — not in categories endpoint
-        null, // mandatoryMentions — not in categories endpoint
-        null, // productionVariant — not in categories endpoint
-        null, // dangerMentions — not in categories endpoint
-        null, // allergens — not in categories endpoint
-        null, // ingredients — not in categories endpoint
-        List.of(), // suppliers — not in categories endpoint
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        List.of(),
         dto.badges() != null && dto.badges().isWater(),
         dto.badges() != null && dto.badges().requiresAgeCheck(),
-        false, // isBulk — not in categories endpoint
-        false, // isVariableWeight — not in categories endpoint
+        false,
+        false,
         dto.limit(),
         priceInstructions);
   }
