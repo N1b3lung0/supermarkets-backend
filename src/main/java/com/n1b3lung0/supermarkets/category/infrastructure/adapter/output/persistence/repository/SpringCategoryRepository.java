@@ -1,6 +1,7 @@
 package com.n1b3lung0.supermarkets.category.infrastructure.adapter.output.persistence.repository;
 
 import com.n1b3lung0.supermarkets.category.infrastructure.adapter.output.persistence.entity.CategoryEntity;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,26 @@ public interface SpringCategoryRepository extends JpaRepository<CategoryEntity, 
             """)
   long countByExternalIdAndSupermarketId(
       @Param("externalId") String externalId, @Param("supermarketId") UUID supermarketId);
+
+  @Query(
+      """
+            SELECT c FROM CategoryEntity c
+            WHERE c.externalId = :externalId
+            AND c.supermarketId = :supermarketId
+            AND c.deletedAt IS NULL
+            """)
+  Optional<CategoryEntity> findByExternalIdAndSupermarketId(
+      @Param("externalId") String externalId, @Param("supermarketId") UUID supermarketId);
+
+  @Query(
+      """
+            SELECT c FROM CategoryEntity c
+            WHERE c.deletedAt IS NULL
+            AND c.levelType = :levelType
+            AND c.supermarketId = :supermarketId
+            """)
+  List<CategoryEntity> findByLevelTypeAndSupermarketId(
+      @Param("levelType") String levelType, @Param("supermarketId") UUID supermarketId);
 
   @Query(
       """

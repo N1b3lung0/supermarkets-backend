@@ -1,12 +1,12 @@
 package com.n1b3lung0.supermarkets.mercadona.infrastructure.config;
 
-import com.n1b3lung0.supermarkets.mercadona.application.port.output.scraper.CategoryScraperPort;
-import com.n1b3lung0.supermarkets.mercadona.application.port.output.scraper.ProductScraperPort;
 import com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scraper.MercadonaCategoryScraperAdapter;
 import com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scraper.MercadonaProductScraperAdapter;
 import com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scraper.mapper.MercadonaCategoryMapper;
 import com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scraper.mapper.MercadonaPriceInstructionsMapper;
 import com.n1b3lung0.supermarkets.mercadona.infrastructure.config.properties.MercadonaScraperProperties;
+import com.n1b3lung0.supermarkets.sync.application.port.output.scraper.CategoryScraperPort;
+import com.n1b3lung0.supermarkets.sync.application.port.output.scraper.ProductScraperPort;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -14,8 +14,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 
 /**
- * Wires the Mercadona RestClient with base URL and default headers, and creates all scraper adapter
- * beans. Domain/application classes have zero Spring annotations.
+ * Wires the Mercadona RestClient and creates all scraper adapter beans. Domain/application classes
+ * have zero Spring annotations — wiring happens here.
  */
 @Configuration
 @EnableConfigurationProperties(MercadonaScraperProperties.class)

@@ -1,11 +1,12 @@
 package com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scraper;
 
 import com.n1b3lung0.supermarkets.category.application.dto.RegisterCategoryCommand;
-import com.n1b3lung0.supermarkets.mercadona.application.port.output.scraper.CategoryScraperPort;
 import com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scraper.dto.MercadonaCategoriesResponse;
+import com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scraper.dto.MercadonaLevel1DetailDto;
 import com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scraper.mapper.MercadonaCategoryMapper;
 import com.n1b3lung0.supermarkets.shared.infrastructure.exception.ExternalServiceException;
 import com.n1b3lung0.supermarkets.supermarket.domain.model.SupermarketId;
+import com.n1b3lung0.supermarkets.sync.application.port.output.scraper.CategoryScraperPort;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -40,22 +41,15 @@ public class MercadonaCategoryScraperAdapter implements CategoryScraperPort {
   @Override
   public List<RegisterCategoryCommand> fetchCategories(SupermarketId supermarketId) {
     var commands = new ArrayList<RegisterCategoryCommand>();
-
     var response = getCategories();
 
     for (var top : response.results()) {
-      // 1. TOP command
       commands.add(mapper.toTopCommand(top, supermarketId));
-
       for (var sub : top.categories()) {
-        // 2. SUBCATEGORY command — parentId resolved later by the sync handler
         commands.add(mapper.toSubCommand(sub, supermarketId, String.valueOf(top.id())));
-
-        // 3. Fetch leaf groups for this subcategory
         try {
           var detail = getLevel1Detail(sub.id());
           for (var leaf : detail.categories()) {
-            // parentId UUID left null here — sync handler resolves it after persisting SUBs
             commands.add(mapper.toLeafCommand(leaf, supermarketId, null));
           }
         } catch (RestClientException ex) {
@@ -85,15 +79,11 @@ public class MercadonaCategoryScraperAdapter implements CategoryScraperPort {
     }
   }
 
-  private com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scraper.dto
-          .MercadonaLevel1DetailDto
-      getLevel1Detail(int subcategoryId) {
+  private MercadonaLevel1DetailDto getLevel1Detail(int subcategoryId) {
     return restClient
         .get()
         .uri("/categories/{id}", subcategoryId)
         .retrieve()
-        .body(
-            com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scraper.dto
-                .MercadonaLevel1DetailDto.class);
+        .body(MercadonaLevel1DetailDto.class);
   }
 }

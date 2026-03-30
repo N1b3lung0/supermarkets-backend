@@ -29,7 +29,7 @@ All conventions follow [`CLAUDE.md`](CLAUDE.md). Every step produces **working, 
 | **Phase 2** — Category BC | [PHASE-02-category.md](docs/roadmap/PHASE-02-category.md) | 23–30 | ✅ |
 | **Phase 3** — Product BC | [PHASE-03-product.md](docs/roadmap/PHASE-03-product.md) | 31–46 | ✅ |
 | **Phase 4** — Mercadona Scraper | [PHASE-04-mercadona-scraper.md](docs/roadmap/PHASE-04-mercadona-scraper.md) | 47–52b | ✅ |
-| **Phase 5** — Sync Orchestration | [PHASE-05-sync.md](docs/roadmap/PHASE-05-sync.md) | 53–59 | ⬜ |
+| **Phase 5** — Sync Orchestration | [PHASE-05-sync.md](docs/roadmap/PHASE-05-sync.md) | 53–59 | ✅ |
 | **Phase 6** — Scheduler (Daily Sync) | [PHASE-06-scheduler.md](docs/roadmap/PHASE-06-scheduler.md) | 60–61 | ⬜ |
 | **Phase 7** — Comparison BC | [PHASE-07-comparison.md](docs/roadmap/PHASE-07-comparison.md) | 62–66 | ⬜ |
 | **Phase 8** — Basket BC | [PHASE-08-basket.md](docs/roadmap/PHASE-08-basket.md) | 67–73 | ⬜ |

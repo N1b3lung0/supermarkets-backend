@@ -10,6 +10,7 @@ import com.n1b3lung0.supermarkets.category.domain.model.ExternalCategoryId;
 import com.n1b3lung0.supermarkets.category.infrastructure.adapter.output.persistence.mapper.CategoryPersistenceMapper;
 import com.n1b3lung0.supermarkets.category.infrastructure.adapter.output.persistence.repository.SpringCategoryRepository;
 import com.n1b3lung0.supermarkets.supermarket.domain.model.SupermarketId;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
@@ -45,10 +46,28 @@ public class CategoryJpaAdapter implements CategoryRepositoryPort, CategoryQuery
 
   @Override
   @Transactional(readOnly = true)
+  public Optional<Category> findByExternalIdAndSupermarketId(
+      ExternalCategoryId externalId, SupermarketId supermarketId) {
+    return repository
+        .findByExternalIdAndSupermarketId(externalId.value(), supermarketId.value())
+        .map(mapper::toDomain);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
   public boolean existsByExternalIdAndSupermarketId(
       ExternalCategoryId externalId, SupermarketId supermarketId) {
     return repository.countByExternalIdAndSupermarketId(externalId.value(), supermarketId.value())
         > 0;
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<Category> findByLevelTypeAndSupermarketId(
+      String levelType, SupermarketId supermarketId) {
+    return repository.findByLevelTypeAndSupermarketId(levelType, supermarketId.value()).stream()
+        .map(mapper::toDomain)
+        .toList();
   }
 
   // -------------------------------------------------------------------------

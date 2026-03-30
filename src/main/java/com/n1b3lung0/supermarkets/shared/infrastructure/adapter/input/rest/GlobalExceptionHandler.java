@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -50,6 +51,13 @@ public class GlobalExceptionHandler {
   public ProblemDetail handleExternalService(ExternalServiceException ex) {
     log.error("External service failure: {}", ex.getMessage(), ex);
     return problem(HttpStatus.BAD_GATEWAY, ex);
+  }
+
+  @ExceptionHandler(MissingServletRequestParameterException.class)
+  public ProblemDetail handleMissingParam(MissingServletRequestParameterException ex) {
+    var problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+    problem.setType(URI.create(ERROR_TYPE_BASE + "missing-parameter"));
+    return problem;
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
