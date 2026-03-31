@@ -38,7 +38,9 @@ public class Basket {
 
   public static Basket create(String name) {
     Objects.requireNonNull(name, "name is required");
-    if (name.isBlank()) throw new IllegalArgumentException("name must not be blank");
+    if (name.isBlank()) {
+      throw new IllegalArgumentException("name must not be blank");
+    }
     var now = Instant.now();
     var basket = new Basket(BasketId.generate(), name, List.of(), now, now);
     basket.domainEvents.add(new BasketCreated(basket.id, name));
@@ -58,7 +60,9 @@ public class Basket {
   public BasketItem addItem(String productName, int quantity) {
     boolean duplicate =
         items.stream().anyMatch(i -> i.getProductName().equalsIgnoreCase(productName));
-    if (duplicate) throw new DuplicateBasketItemException(productName);
+    if (duplicate) {
+      throw new DuplicateBasketItemException(productName);
+    }
 
     var item = BasketItem.create(productName, quantity);
     items.add(item);
