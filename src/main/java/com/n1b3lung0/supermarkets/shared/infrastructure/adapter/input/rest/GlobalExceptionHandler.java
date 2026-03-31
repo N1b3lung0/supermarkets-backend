@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(BusinessRuleViolationException.class)
   public ProblemDetail handleBusinessRule(BusinessRuleViolationException ex) {
-    return problem(HttpStatus.UNPROCESSABLE_ENTITY, ex);
+    return problem(HttpStatus.UNPROCESSABLE_CONTENT, ex);
   }
 
   @ExceptionHandler(ConflictException.class)
@@ -63,7 +63,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ProblemDetail handleValidation(MethodArgumentNotValidException ex) {
     var problem =
-        ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, "Validation failed");
+        ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_CONTENT, "Validation failed");
     problem.setType(URI.create(ERROR_TYPE_BASE + "validation"));
     problem.setProperty(
         "violations",

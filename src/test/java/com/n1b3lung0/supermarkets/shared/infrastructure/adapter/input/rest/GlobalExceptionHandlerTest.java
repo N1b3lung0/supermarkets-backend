@@ -89,7 +89,7 @@ class GlobalExceptionHandlerTest {
   void businessRuleViolationException_shouldReturn422WithProblemDetail() throws Exception {
     mockMvc
         .perform(get("/stub").param("type", "business-rule"))
-        .andExpect(status().isUnprocessableEntity())
+        .andExpect(status().isUnprocessableContent())
         .andExpect(jsonPath("$.status").value(422))
         .andExpect(jsonPath("$.detail").value("rule violated"));
   }

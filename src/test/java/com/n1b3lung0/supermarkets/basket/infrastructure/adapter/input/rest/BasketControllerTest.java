@@ -92,7 +92,7 @@ class BasketControllerTest {
             post("/api/v1/baskets")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsString(Map.of("name", ""))))
-        .andExpect(status().isUnprocessableEntity());
+        .andExpect(status().isUnprocessableContent());
   }
 
   @Test

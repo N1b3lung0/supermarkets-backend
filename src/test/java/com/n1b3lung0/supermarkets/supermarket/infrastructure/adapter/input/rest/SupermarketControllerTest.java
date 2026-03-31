@@ -72,7 +72,7 @@ class SupermarketControllerTest {
     // when / then
     mockMvc
         .perform(post("/api/v1/supermarkets").contentType(MediaType.APPLICATION_JSON).content(body))
-        .andExpect(status().isUnprocessableEntity());
+        .andExpect(status().isUnprocessableContent());
   }
 
   @Test

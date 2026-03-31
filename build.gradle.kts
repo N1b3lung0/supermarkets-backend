@@ -72,11 +72,20 @@ tasks.named<Test>("test") {
         "java.base/java.util=ALL-UNNAMED",
         "--add-opens",
         "java.base/java.lang.reflect=ALL-UNNAMED",
+        // Allow sun.misc.Unsafe usage (ArchUnit 1.3.0 + Mockito byte-buddy internals)
+        // and suppress the "terminally deprecated" JVM warning on Java 21+
+        "--sun-misc-unsafe-memory-access=allow",
+        // Allow dynamic agent loading (Mockito byte-buddy agent)
+        "-XX:+EnableDynamicAgentLoading",
     )
 }
 
 tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
     workingDir = rootProject.projectDir
+    jvmArgs(
+        "--sun-misc-unsafe-memory-access=allow",
+        "-XX:+EnableDynamicAgentLoading",
+    )
 }
 
 spotless {
@@ -105,6 +114,7 @@ tasks.withType<JavaCompile>().configureEach {
             "jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
             "--add-exports",
             "jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+            "-Xlint:deprecation",
         ),
     )
 }
