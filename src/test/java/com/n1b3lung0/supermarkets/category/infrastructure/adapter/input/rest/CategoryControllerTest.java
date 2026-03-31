@@ -79,7 +79,7 @@ class CategoryControllerTest {
 
     mockMvc
         .perform(post("/api/v1/categories").contentType(MediaType.APPLICATION_JSON).content(body))
-        .andExpect(status().isUnprocessableEntity());
+        .andExpect(status().isUnprocessableContent());
   }
 
   @Test
@@ -95,7 +95,7 @@ class CategoryControllerTest {
 
     mockMvc
         .perform(post("/api/v1/categories").contentType(MediaType.APPLICATION_JSON).content(body))
-        .andExpect(status().isUnprocessableEntity());
+        .andExpect(status().isUnprocessableContent());
   }
 
   @Test
