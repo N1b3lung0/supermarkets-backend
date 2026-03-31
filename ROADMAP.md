@@ -32,7 +32,7 @@ All conventions follow [`CLAUDE.md`](CLAUDE.md). Every step produces **working, 
 | **Phase 5** — Sync Orchestration | [PHASE-05-sync.md](docs/roadmap/PHASE-05-sync.md) | 53–59 | ✅ |
 | **Phase 6** — Scheduler (Daily Sync) | [PHASE-06-scheduler.md](docs/roadmap/PHASE-06-scheduler.md) | 60–61 | ✅ |
 | **Phase 7** — Comparison BC | [PHASE-07-comparison.md](docs/roadmap/PHASE-07-comparison.md) | 62–66 | ✅ |
-| **Phase 8** — Basket BC | [PHASE-08-basket.md](docs/roadmap/PHASE-08-basket.md) | 67–73 | ⬜ |
+| **Phase 8** — Basket BC | [PHASE-08-basket.md](docs/roadmap/PHASE-08-basket.md) | 67–73 | ✅ |
 | **Phase 9** — Additional Scrapers | [PHASE-09-additional-scrapers.md](docs/roadmap/PHASE-09-additional-scrapers.md) | 74–80 | ⬜ |
 | **Phase 10** — Performance & Data | [PHASE-10-performance.md](docs/roadmap/PHASE-10-performance.md) | 81–86 | ⬜ |
 | **Phase 11** — Security | [PHASE-11-security.md](docs/roadmap/PHASE-11-security.md) | 87–88 | ⬜ |

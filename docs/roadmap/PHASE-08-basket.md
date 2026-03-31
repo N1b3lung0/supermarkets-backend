@@ -12,67 +12,53 @@
 
 ---
 
-### Step 67 ⬜ — Define Basket domain model
+### Step 67 ✅ — Define Basket domain model
 - Create `basket/domain/model/BasketId.java`, `BasketItemId.java` (UUID records)
-- Create `basket/domain/model/BasketItem.java` (entity — `id`, `productName`, `quantity`)
-- Create `basket/domain/model/Basket.java` (Aggregate Root — `id`, `name`, `List<BasketItem> items`)
-  - `create(name)` factory
-  - `addItem(productName, quantity)` — enforces no duplicates by name → throws `DuplicateBasketItemException`
-  - `removeItem(BasketItemId)` — throws `BasketItemNotFoundException` if not found
-  - `updateItemQuantity(BasketItemId, int)` — throws `BasketItemNotFoundException`; quantity must be > 0
-  - `clear()` — removes all items
-- **Verify:** unit tests on all business methods + invariants
+- Create `basket/domain/model/BasketItem.java` (entity — `id`, `productName`, `quantity`; `reconstitute()` public for mapper)
+- Create `basket/domain/model/Basket.java` (Aggregate Root — `create`, `addItem`, `removeItem`, `updateItemQuantity`, `clear`, `pullDomainEvents`)
+- **Verify:** `BasketDomainTest` — all business methods + invariants + event emission
 
-### Step 68 ⬜ — Basket domain events + exceptions
-- Create `basket/domain/event/BasketEvent.java` (sealed interface)
-- Create `basket/domain/event/BasketCreated.java`, `BasketItemAdded.java`, `BasketItemRemoved.java` (records)
-- Create `basket/domain/exception/BasketNotFoundException.java` (extends `NotFoundException`)
-- Create `basket/domain/exception/BasketItemNotFoundException.java` (extends `NotFoundException`)
-- Create `basket/domain/exception/DuplicateBasketItemException.java` (extends `ConflictException`)
-- **Verify:** unit tests per event emission
+### Step 68 ✅ — Basket domain events + exceptions
+- Create `basket/domain/event/BasketEvent.java` (sealed interface — permits `BasketCreated`, `BasketItemAdded`, `BasketItemRemoved`)
+- Create `BasketCreated`, `BasketItemAdded`, `BasketItemRemoved` event records
+- Create `BasketNotFoundException`, `BasketItemNotFoundException`, `DuplicateBasketItemException`
 
-### Step 69 ⬜ — Basket use cases (commands)
-- `CreateBasketUseCase` + `CreateBasketCommand` + `CreateBasketHandler`
-- `AddBasketItemUseCase` + `AddBasketItemCommand` + `AddBasketItemHandler`
-- `RemoveBasketItemUseCase` + `RemoveBasketItemCommand` + `RemoveBasketItemHandler`
-- `UpdateBasketItemQuantityUseCase` + `UpdateBasketItemQuantityCommand` + `UpdateBasketItemQuantityHandler`
-- `ClearBasketUseCase` + `ClearBasketCommand` + `ClearBasketHandler`
-- **Verify:** unit tests per handler — happy path + `BasketNotFoundException` + `BasketItemNotFoundException` scenarios
+### Step 69 ✅ — Basket use cases (commands)
+- `CreateBasket`, `AddBasketItem`, `RemoveBasketItem`, `UpdateBasketItemQuantity`, `ClearBasket` — use case interfaces + DTOs + handlers
+- **Verify:** `BasketCommandHandlersTest` — happy paths + `BasketNotFoundException` scenarios
 
-### Step 70 ⬜ — Basket use cases (queries)
+### Step 70 ✅ — Basket use cases (queries)
 - `GetBasketByIdUseCase` + `GetBasketByIdQuery` + `GetBasketByIdHandler`
-- Create `basket/application/dto/BasketDetailView.java` (record — `id`, `name`, `items: List<BasketItemView>`)
-- Create `basket/application/dto/BasketItemView.java` (record — `id`, `productName`, `quantity`)
-- **Verify:** unit test returning `BasketDetailView`; `BasketNotFoundException` when not found
+- `BasketDetailView` + `BasketItemView` DTOs
+- **Verify:** covered by `BasketControllerTest` + `BasketJpaAdapterTest`
 
-### Step 71 ⬜ — Compare Basket use case (query)
-- Create `basket/application/port/input/query/CompareBasketUseCase.java`
-- Create `basket/application/dto/CompareBasketQuery.java` (record — `BasketId`)
-- Create `basket/application/dto/BasketComparisonView.java` (record):
-  - `List<SupermarketBasketCost> perSupermarket` — each with supermarketId, supermarketName, totalCost, perItemMatches
-  - `SupermarketId cheapestSupermarketId` (nullable — null if no prices found)
-- Create `basket/application/query/CompareBasketHandler.java`
-  - For each item in basket, calls `ProductComparisonQueryPort` (cross-context via output port)
-  - Aggregates results per supermarket: sums cheapest matching product price × quantity
-- **Verify:** unit tests — basket with 3 items, 2 supermarkets — correct total per supermarket, correct cheapest identified
+### Step 71 ✅ — Compare Basket use case (query)
+- Create `CompareBasketUseCase` + `CompareBasketQuery` + `BasketComparisonView` + `SupermarketBasketCost` + `BasketItemMatchView`
+- Create `CompareBasketHandler`:
+  - For each basket item, calls `ProductComparisonQueryPort.findMatchesByName()` (cross-context)
+  - Groups cheapest match per supermarket per item
+  - Sums `unitPrice × quantity` per supermarket; sorts by total cost ascending
+  - Returns cheapest supermarket id/name
+- Add `GET /api/v1/baskets/{id}/compare` to `BasketController`
+- Wire `CompareBasketUseCase` bean in `BasketConfig`
+- **Verify:** `CompareBasketHandlerTest` — 3 items × 2 supermarkets (correct totals + cheapest), empty basket, no matches
 
-### Step 72 ⬜ — Basket JPA persistence + Flyway migration
-- Create `V10__create_baskets_table.sql` + `V11__create_basket_items_table.sql`
-- Create `basket/infrastructure/adapter/output/persistence/entity/BasketEntity.java`
-- Create `basket/infrastructure/adapter/output/persistence/entity/BasketItemEntity.java`
-- Create `basket/infrastructure/adapter/output/persistence/repository/SpringBasketRepository.java`
-- Create `basket/infrastructure/adapter/output/persistence/BasketJpaAdapter.java`
-- **Verify:** `@DataJpaTest` + Testcontainers — CRUD + soft delete + item management
+### Step 72 ✅ — Basket JPA persistence + Flyway migration
+- Create `V10__create_baskets_table.sql` (baskets + basket_items with CASCADE + unique constraint on product_name per basket)
+- Create `BasketEntity`, `BasketItemEntity` (@OneToMany orphanRemoval)
+- Create `SpringBasketRepository` (findByIdWithItems JPQL LEFT JOIN FETCH)
+- Create `BasketJpaAdapter` + `BasketPersistenceMapper`
+- **Verify:** `BasketJpaAdapterTest` (Testcontainers) — round-trip, add/remove items, not-found
 
-### Step 73 ⬜ — Basket Config + REST controller
-- Create `BasketConfig.java` (bean registration)
+### Step 73 ✅ — Basket Config + REST controller
+- Create `BasketConfig.java` (all bean wiring, zero Spring annotations in domain/application)
 - Create `BasketController.java`:
-  - `POST /api/v1/baskets` → 201 + Location header
-  - `GET /api/v1/baskets/{id}` → `BasketDetailView`
-  - `POST /api/v1/baskets/{id}/items` → 201
+  - `POST /api/v1/baskets` → 201 + Location
+  - `GET /api/v1/baskets/{id}` → `BasketDetailView` (404 if not found)
+  - `POST /api/v1/baskets/{id}/items` → 201 + Location
+  - `PATCH /api/v1/baskets/{id}/items/{itemId}` → 204
   - `DELETE /api/v1/baskets/{id}/items/{itemId}` → 204
-  - `PATCH /api/v1/baskets/{id}/items/{itemId}` → 200 (update quantity)
-  - `DELETE /api/v1/baskets/{id}/items` → 204 (clear)
-  - `GET /api/v1/baskets/{id}/compare` → `BasketComparisonView`
-- **Verify:** `@WebMvcTest` all endpoints — happy paths + 404 scenarios
+  - `DELETE /api/v1/baskets/{id}/items` → 204 (clear all)
+- **Verify:** `BasketControllerTest` — all endpoints + 422 validation + 404 scenarios
+- **Fixes:** `BasketEntity`/`BasketItemEntity` constructors made public for cross-package mapper access
 
