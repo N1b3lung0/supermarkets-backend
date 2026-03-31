@@ -10,11 +10,14 @@ import com.n1b3lung0.supermarkets.basket.application.port.input.command.ClearBas
 import com.n1b3lung0.supermarkets.basket.application.port.input.command.CreateBasketUseCase;
 import com.n1b3lung0.supermarkets.basket.application.port.input.command.RemoveBasketItemUseCase;
 import com.n1b3lung0.supermarkets.basket.application.port.input.command.UpdateBasketItemQuantityUseCase;
+import com.n1b3lung0.supermarkets.basket.application.port.input.query.CompareBasketUseCase;
 import com.n1b3lung0.supermarkets.basket.application.port.input.query.GetBasketByIdUseCase;
+import com.n1b3lung0.supermarkets.basket.application.query.CompareBasketHandler;
 import com.n1b3lung0.supermarkets.basket.application.query.GetBasketByIdHandler;
 import com.n1b3lung0.supermarkets.basket.infrastructure.adapter.output.persistence.BasketJpaAdapter;
 import com.n1b3lung0.supermarkets.basket.infrastructure.adapter.output.persistence.mapper.BasketPersistenceMapper;
 import com.n1b3lung0.supermarkets.basket.infrastructure.adapter.output.persistence.repository.SpringBasketRepository;
+import com.n1b3lung0.supermarkets.comparison.application.port.output.ProductComparisonQueryPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -61,5 +64,11 @@ public class BasketConfig {
   @Bean
   public GetBasketByIdUseCase getBasketByIdUseCase(BasketJpaAdapter adapter) {
     return new GetBasketByIdHandler(adapter);
+  }
+
+  @Bean
+  public CompareBasketUseCase compareBasketUseCase(
+      BasketJpaAdapter adapter, ProductComparisonQueryPort comparisonQueryPort) {
+    return new CompareBasketHandler(adapter, comparisonQueryPort);
   }
 }

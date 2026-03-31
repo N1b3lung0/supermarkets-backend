@@ -32,16 +32,16 @@
 - `BasketDetailView` + `BasketItemView` DTOs
 - **Verify:** covered by `BasketControllerTest` + `BasketJpaAdapterTest`
 
-### Step 71 ⬜ — Compare Basket use case (query)
-- Create `basket/application/port/input/query/CompareBasketUseCase.java`
-- Create `basket/application/dto/CompareBasketQuery.java` (record — `BasketId`)
-- Create `basket/application/dto/BasketComparisonView.java` (record):
-  - `List<SupermarketBasketCost> perSupermarket` — each with supermarketId, supermarketName, totalCost, perItemMatches
-  - `SupermarketId cheapestSupermarketId` (nullable — null if no prices found)
-- Create `basket/application/query/CompareBasketHandler.java`
-  - For each item in basket, calls `ProductComparisonQueryPort` (cross-context via output port)
-  - Aggregates results per supermarket: sums cheapest matching product price × quantity
-- **Verify:** unit tests — basket with 3 items, 2 supermarkets — correct total per supermarket, correct cheapest identified
+### Step 71 ✅ — Compare Basket use case (query)
+- Create `CompareBasketUseCase` + `CompareBasketQuery` + `BasketComparisonView` + `SupermarketBasketCost` + `BasketItemMatchView`
+- Create `CompareBasketHandler`:
+  - For each basket item, calls `ProductComparisonQueryPort.findMatchesByName()` (cross-context)
+  - Groups cheapest match per supermarket per item
+  - Sums `unitPrice × quantity` per supermarket; sorts by total cost ascending
+  - Returns cheapest supermarket id/name
+- Add `GET /api/v1/baskets/{id}/compare` to `BasketController`
+- Wire `CompareBasketUseCase` bean in `BasketConfig`
+- **Verify:** `CompareBasketHandlerTest` — 3 items × 2 supermarkets (correct totals + cheapest), empty basket, no matches
 
 ### Step 72 ✅ — Basket JPA persistence + Flyway migration
 - Create `V10__create_baskets_table.sql` (baskets + basket_items with CASCADE + unique constraint on product_name per basket)

@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.n1b3lung0.supermarkets.basket.application.dto.BasketComparisonView;
 import com.n1b3lung0.supermarkets.basket.application.dto.BasketDetailView;
 import com.n1b3lung0.supermarkets.basket.application.dto.BasketItemView;
 import com.n1b3lung0.supermarkets.basket.application.port.input.command.AddBasketItemUseCase;
@@ -19,6 +20,7 @@ import com.n1b3lung0.supermarkets.basket.application.port.input.command.ClearBas
 import com.n1b3lung0.supermarkets.basket.application.port.input.command.CreateBasketUseCase;
 import com.n1b3lung0.supermarkets.basket.application.port.input.command.RemoveBasketItemUseCase;
 import com.n1b3lung0.supermarkets.basket.application.port.input.command.UpdateBasketItemQuantityUseCase;
+import com.n1b3lung0.supermarkets.basket.application.port.input.query.CompareBasketUseCase;
 import com.n1b3lung0.supermarkets.basket.application.port.input.query.GetBasketByIdUseCase;
 import com.n1b3lung0.supermarkets.basket.domain.exception.BasketNotFoundException;
 import com.n1b3lung0.supermarkets.basket.domain.model.BasketId;
@@ -46,6 +48,7 @@ class BasketControllerTest {
   @Mock private UpdateBasketItemQuantityUseCase updateQuantity;
   @Mock private ClearBasketUseCase clearBasket;
   @Mock private GetBasketByIdUseCase getById;
+  @Mock private CompareBasketUseCase compareBasket;
 
   private MockMvc mockMvc;
   private final ObjectMapper om = new ObjectMapper().findAndRegisterModules();
@@ -58,7 +61,13 @@ class BasketControllerTest {
     mockMvc =
         MockMvcBuilders.standaloneSetup(
                 new BasketController(
-                    createBasket, addItem, removeItem, updateQuantity, clearBasket, getById))
+                    createBasket,
+                    addItem,
+                    removeItem,
+                    updateQuantity,
+                    clearBasket,
+                    getById,
+                    compareBasket))
             .setControllerAdvice(new GlobalExceptionHandler())
             .build();
   }
@@ -147,5 +156,17 @@ class BasketControllerTest {
         .perform(delete("/api/v1/baskets/{id}/items", BASKET_ID))
         .andExpect(status().isNoContent());
     verify(clearBasket).execute(any());
+  }
+
+  @Test
+  void compare_returns200WithComparisonView() throws Exception {
+    var view = new BasketComparisonView(BASKET_ID, "Mi cesta", List.of(), null, null);
+    given(compareBasket.execute(any())).willReturn(view);
+
+    mockMvc
+        .perform(get("/api/v1/baskets/{id}/compare", BASKET_ID))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.basketName").value("Mi cesta"))
+        .andExpect(jsonPath("$.perSupermarket").isArray());
   }
 }

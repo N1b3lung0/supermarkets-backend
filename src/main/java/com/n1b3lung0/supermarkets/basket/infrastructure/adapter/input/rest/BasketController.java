@@ -1,8 +1,10 @@
 package com.n1b3lung0.supermarkets.basket.infrastructure.adapter.input.rest;
 
 import com.n1b3lung0.supermarkets.basket.application.dto.AddBasketItemCommand;
+import com.n1b3lung0.supermarkets.basket.application.dto.BasketComparisonView;
 import com.n1b3lung0.supermarkets.basket.application.dto.BasketDetailView;
 import com.n1b3lung0.supermarkets.basket.application.dto.ClearBasketCommand;
+import com.n1b3lung0.supermarkets.basket.application.dto.CompareBasketQuery;
 import com.n1b3lung0.supermarkets.basket.application.dto.CreateBasketCommand;
 import com.n1b3lung0.supermarkets.basket.application.dto.GetBasketByIdQuery;
 import com.n1b3lung0.supermarkets.basket.application.dto.RemoveBasketItemCommand;
@@ -12,6 +14,7 @@ import com.n1b3lung0.supermarkets.basket.application.port.input.command.ClearBas
 import com.n1b3lung0.supermarkets.basket.application.port.input.command.CreateBasketUseCase;
 import com.n1b3lung0.supermarkets.basket.application.port.input.command.RemoveBasketItemUseCase;
 import com.n1b3lung0.supermarkets.basket.application.port.input.command.UpdateBasketItemQuantityUseCase;
+import com.n1b3lung0.supermarkets.basket.application.port.input.query.CompareBasketUseCase;
 import com.n1b3lung0.supermarkets.basket.application.port.input.query.GetBasketByIdUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -42,6 +45,7 @@ public class BasketController {
   private final UpdateBasketItemQuantityUseCase updateQuantity;
   private final ClearBasketUseCase clearBasket;
   private final GetBasketByIdUseCase getById;
+  private final CompareBasketUseCase compareBasket;
 
   public BasketController(
       CreateBasketUseCase createBasket,
@@ -49,13 +53,15 @@ public class BasketController {
       RemoveBasketItemUseCase removeItem,
       UpdateBasketItemQuantityUseCase updateQuantity,
       ClearBasketUseCase clearBasket,
-      GetBasketByIdUseCase getById) {
+      GetBasketByIdUseCase getById,
+      CompareBasketUseCase compareBasket) {
     this.createBasket = createBasket;
     this.addItem = addItem;
     this.removeItem = removeItem;
     this.updateQuantity = updateQuantity;
     this.clearBasket = clearBasket;
     this.getById = getById;
+    this.compareBasket = compareBasket;
   }
 
   @Operation(summary = "Create a new basket")
@@ -103,6 +109,12 @@ public class BasketController {
   public ResponseEntity<Void> clearBasket(@PathVariable UUID id) {
     clearBasket.execute(new ClearBasketCommand(id));
     return ResponseEntity.noContent().build();
+  }
+
+  @Operation(summary = "Compare basket total cost across all supermarkets")
+  @GetMapping("/{id}/compare")
+  public BasketComparisonView compare(@PathVariable UUID id) {
+    return compareBasket.execute(new CompareBasketQuery(id));
   }
 
   // --- inner request records ---
