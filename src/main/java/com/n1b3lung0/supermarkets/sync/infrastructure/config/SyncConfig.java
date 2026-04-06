@@ -12,6 +12,7 @@ import com.n1b3lung0.supermarkets.sync.application.port.output.scraper.ProductSc
 import com.n1b3lung0.supermarkets.sync.infrastructure.adapter.output.persistence.SyncRunJpaAdapter;
 import com.n1b3lung0.supermarkets.sync.infrastructure.adapter.output.persistence.mapper.SyncRunPersistenceMapper;
 import com.n1b3lung0.supermarkets.sync.infrastructure.adapter.output.persistence.repository.SpringSyncRunRepository;
+import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -35,8 +36,8 @@ public class SyncConfig {
 
   @Bean
   public SyncSupermarketCatalogUseCase syncSupermarketCatalogUseCase(
-      CategoryScraperPort categoryScraper,
-      ProductScraperPort productScraper,
+      List<CategoryScraperPort> categoryScrapers,
+      List<ProductScraperPort> productScrapers,
       RegisterCategoryUseCase registerCategoryUseCase,
       UpsertProductUseCase upsertProductUseCase,
       DeactivateProductUseCase deactivateProductUseCase,
@@ -44,8 +45,8 @@ public class SyncConfig {
       ProductRepositoryPort productRepositoryPort,
       SyncRunJpaAdapter syncRunJpaAdapter) {
     return new SyncSupermarketCatalogHandler(
-        categoryScraper,
-        productScraper,
+        categoryScrapers,
+        productScrapers,
         registerCategoryUseCase,
         upsertProductUseCase,
         deactivateProductUseCase,

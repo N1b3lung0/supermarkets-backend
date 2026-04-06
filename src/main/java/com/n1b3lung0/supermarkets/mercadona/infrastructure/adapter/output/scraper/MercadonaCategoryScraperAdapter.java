@@ -9,6 +9,7 @@ import com.n1b3lung0.supermarkets.supermarket.domain.model.SupermarketId;
 import com.n1b3lung0.supermarkets.sync.application.port.output.scraper.CategoryScraperPort;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestClient;
@@ -30,12 +31,20 @@ public class MercadonaCategoryScraperAdapter implements CategoryScraperPort {
 
   private static final Logger log = LoggerFactory.getLogger(MercadonaCategoryScraperAdapter.class);
 
+  /** Seeded UUID for Mercadona — see V3__seed_supermarkets.sql. */
+  private static final UUID MERCADONA_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+
   private final RestClient restClient;
   private final MercadonaCategoryMapper mapper;
 
   public MercadonaCategoryScraperAdapter(RestClient restClient, MercadonaCategoryMapper mapper) {
     this.restClient = restClient;
     this.mapper = mapper;
+  }
+
+  @Override
+  public boolean supports(SupermarketId supermarketId) {
+    return MERCADONA_ID.equals(supermarketId.value());
   }
 
   @Override

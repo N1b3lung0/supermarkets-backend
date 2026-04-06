@@ -59,6 +59,9 @@ class SyncSupermarketCatalogHandlerTest {
   void setUp() {
     categoryScraper = mock(CategoryScraperPort.class);
     productScraper = mock(ProductScraperPort.class);
+    // Both mocked scrapers support any supermarket by default
+    when(categoryScraper.supports(any())).thenReturn(true);
+    when(productScraper.supports(any())).thenReturn(true);
     registerCategory = mock(RegisterCategoryUseCase.class);
     upsertProduct = mock(UpsertProductUseCase.class);
     deactivateProduct = mock(DeactivateProductUseCase.class);
@@ -67,8 +70,8 @@ class SyncSupermarketCatalogHandlerTest {
     syncRunRepository = mock(SyncRunRepositoryPort.class);
     handler =
         new SyncSupermarketCatalogHandler(
-            categoryScraper,
-            productScraper,
+            List.of(categoryScraper),
+            List.of(productScraper),
             registerCategory,
             upsertProduct,
             deactivateProduct,

@@ -41,8 +41,8 @@ public class SyncSupermarketCatalogHandler implements SyncSupermarketCatalogUseC
 
   private static final Logger log = LoggerFactory.getLogger(SyncSupermarketCatalogHandler.class);
 
-  private final CategoryScraperPort categoryScraper;
-  private final ProductScraperPort productScraper;
+  private final List<CategoryScraperPort> categoryScrapers;
+  private final List<ProductScraperPort> productScrapers;
   private final RegisterCategoryUseCase registerCategory;
   private final UpsertProductUseCase upsertProduct;
   private final DeactivateProductUseCase deactivateProduct;
@@ -51,22 +51,42 @@ public class SyncSupermarketCatalogHandler implements SyncSupermarketCatalogUseC
   private final SyncRunRepositoryPort syncRunRepository;
 
   public SyncSupermarketCatalogHandler(
-      CategoryScraperPort categoryScraper,
-      ProductScraperPort productScraper,
+      List<CategoryScraperPort> categoryScrapers,
+      List<ProductScraperPort> productScrapers,
       RegisterCategoryUseCase registerCategory,
       UpsertProductUseCase upsertProduct,
       DeactivateProductUseCase deactivateProduct,
       CategoryRepositoryPort categoryRepository,
       ProductRepositoryPort productRepository,
       SyncRunRepositoryPort syncRunRepository) {
-    this.categoryScraper = categoryScraper;
-    this.productScraper = productScraper;
+    this.categoryScrapers = List.copyOf(categoryScrapers);
+    this.productScrapers = List.copyOf(productScrapers);
     this.registerCategory = registerCategory;
     this.upsertProduct = upsertProduct;
     this.deactivateProduct = deactivateProduct;
     this.categoryRepository = categoryRepository;
     this.productRepository = productRepository;
     this.syncRunRepository = syncRunRepository;
+  }
+
+  private CategoryScraperPort findCategoryScraper(SupermarketId supermarketId) {
+    return categoryScrapers.stream()
+        .filter(s -> s.supports(supermarketId))
+        .findFirst()
+        .orElseThrow(
+            () ->
+                new IllegalStateException(
+                    "No CategoryScraperPort available for supermarket " + supermarketId.value()));
+  }
+
+  private ProductScraperPort findProductScraper(SupermarketId supermarketId) {
+    return productScrapers.stream()
+        .filter(s -> s.supports(supermarketId))
+        .findFirst()
+        .orElseThrow(
+            () ->
+                new IllegalStateException(
+                    "No ProductScraperPort available for supermarket " + supermarketId.value()));
   }
 
   @Override
@@ -80,6 +100,7 @@ public class SyncSupermarketCatalogHandler implements SyncSupermarketCatalogUseC
       // ------------------------------------------------------------------
       // 1. Sync categories
       // ------------------------------------------------------------------
+      var categoryScraper = findCategoryScraper(supermarketId);
       var categoryCommands = categoryScraper.fetchCategories(supermarketId);
       log.info(
           "[Sync] Fetched {} category commands for supermarket {}",
@@ -116,6 +137,7 @@ public class SyncSupermarketCatalogHandler implements SyncSupermarketCatalogUseC
       var subCategories = categoryRepository.findByLevelTypeAndSupermarketId("SUB", supermarketId);
       log.info("[Sync] Found {} SUB categories to iterate for products", subCategories.size());
 
+      var productScraper = findProductScraper(supermarketId);
       List<UpsertProductCommand> allProductCommands = new ArrayList<>();
       for (var sub : subCategories) {
         var cmds =
