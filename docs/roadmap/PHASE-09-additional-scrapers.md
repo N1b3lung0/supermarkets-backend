@@ -34,19 +34,23 @@
 - Handler dispatch verified by `execute_dispatchesToCorrectScraper_whenMultipleScrapersPresent` test
 - **Verify:** unit tests confirm correct scraper selection; `POST /api/v1/sync/supermarkets/{carrefourId}` completes without error
 
-### Step 77 ⬜ — Research ALDI API + implement adapters
+### Step 77 ✅ — Research ALDI API + implement adapters
 - Same pattern: research → `docs/scrapers/aldi-api.md` → fixtures → `AldiCategoryScraperAdapter` + `AldiProductScraperAdapter` → config → integration
 - **Verify:** unit tests + manual trigger
 
-### Step 78 ⬜ — Research LIDL API + implement adapters
+### Step 78 ✅ — Research LIDL API + implement adapters
 - Same pattern
 - **Verify:** unit tests + manual trigger
 
-### Step 79 ⬜ — Research Alcampo API + implement adapters
+### Step 79 ✅ — Research Alcampo API + implement adapters
 - Same pattern
 - **Verify:** unit tests + manual trigger
 
-### Step 80 ⬜ — Research DIA API + implement adapters
-- Same pattern
-- **Verify:** unit tests + manual trigger
+### Step 80 ✅ — Research DIA API + implement adapters
+- `docs/scrapers/dia-api.md` documents the known API shape (Cloudflare-blocked in practice)
+- Fixtures saved in `src/test/resources/fixtures/dia/`
+- `DiaCategoryScraperAdapter` + `DiaProductScraperAdapter` implemented with paginated product fetch
+- `DiaScraperConfig` + `DiaScraperProperties` wired; `app.scraper.dia` added to `application.yaml`
+- `DiaScraperAdapterTest` covers: category fetch, 403 → `ExternalServiceException`, `supports()`, product fetch, unknown category, product 403
+- **Verify:** `./gradlew test --tests "com.n1b3lung0.supermarkets.dia.*"` → BUILD SUCCESSFUL ✅
 
