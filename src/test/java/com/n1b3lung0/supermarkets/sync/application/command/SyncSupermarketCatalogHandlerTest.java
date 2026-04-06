@@ -36,7 +36,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-/** Steps 54+55+58 — unit tests for SyncSupermarketCatalogHandler. */
+/** Steps 54+55+58+76 — unit tests for SyncSupermarketCatalogHandler. */
 class SyncSupermarketCatalogHandlerTest {
 
   private CategoryScraperPort categoryScraper;
@@ -255,5 +255,65 @@ class SyncSupermarketCatalogHandlerTest {
     var lastSaved = captor.getAllValues().get(captor.getAllValues().size() - 1);
     assertThat(lastSaved.getStatus()).isEqualTo(SyncStatus.FAILED);
     assertThat(lastSaved.getErrorMessage()).contains("API down");
+  }
+
+  @Test
+  void execute_dispatchesToCorrectScraper_whenMultipleScrapersPresent() {
+    // Arrange two scrapers — only the second supports this supermarket
+    var otherCategoryScraper = mock(CategoryScraperPort.class);
+    var otherProductScraper = mock(ProductScraperPort.class);
+    when(otherCategoryScraper.supports(any())).thenReturn(false);
+    when(otherProductScraper.supports(any())).thenReturn(false);
+    when(categoryScraper.supports(any())).thenReturn(true);
+    when(productScraper.supports(any())).thenReturn(true);
+    when(categoryScraper.fetchCategories(SUPERMARKET_ID)).thenReturn(List.of());
+    when(categoryRepository.findByLevelTypeAndSupermarketId(any(), any())).thenReturn(List.of());
+    when(productRepository.findActiveExternalIdsBySupermarket(any())).thenReturn(List.of());
+
+    var multiHandler =
+        new SyncSupermarketCatalogHandler(
+            List.of(otherCategoryScraper, categoryScraper),
+            List.of(otherProductScraper, productScraper),
+            registerCategory,
+            upsertProduct,
+            deactivateProduct,
+            categoryRepository,
+            productRepository,
+            syncRunRepository);
+
+    multiHandler.execute(COMMAND);
+
+    // Only the matching scraper should be called
+    verify(categoryScraper).fetchCategories(SUPERMARKET_ID);
+    verify(otherCategoryScraper, never()).fetchCategories(any());
+  }
+
+  @Test
+  void execute_noMatchingScraper_shouldSaveFailedSyncRun() {
+    // Build a handler where no scraper supports this supermarket
+    var unmatchedCategoryScraper = mock(CategoryScraperPort.class);
+    var unmatchedProductScraper = mock(ProductScraperPort.class);
+    when(unmatchedCategoryScraper.supports(any())).thenReturn(false);
+    when(unmatchedProductScraper.supports(any())).thenReturn(false);
+
+    var noMatchHandler =
+        new SyncSupermarketCatalogHandler(
+            List.of(unmatchedCategoryScraper),
+            List.of(unmatchedProductScraper),
+            registerCategory,
+            upsertProduct,
+            deactivateProduct,
+            categoryRepository,
+            productRepository,
+            syncRunRepository);
+
+    var runId = noMatchHandler.execute(COMMAND);
+
+    assertThat(runId).isNotNull();
+    var captor =
+        ArgumentCaptor.forClass(com.n1b3lung0.supermarkets.sync.domain.model.SyncRun.class);
+    verify(syncRunRepository, atLeastOnce()).save(captor.capture());
+    var last = captor.getAllValues().get(captor.getAllValues().size() - 1);
+    assertThat(last.getStatus()).isEqualTo(SyncStatus.FAILED);
   }
 }
