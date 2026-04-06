@@ -43,6 +43,9 @@ app:
     carrefour:
       base-url: https://www.carrefour.es
       request-timeout: 15s
+    aldi:
+      base-url: https://www.aldi.es
+      request-timeout: 15s
   scheduler:
     sync:
       enabled: true

@@ -1,0 +1,48 @@
+{
+  "content": [
+    {
+      "id": "24356",
+      "ean": "4056489956037",
+      "name": "Leche entera ALDI 1 l",
+      "brand": "ALDI",
+      "price": 0.65,
+      "pricePerUnit": 0.65,
+      "unitLabel": "l",
+      "currency": "EUR",
+      "imageUrl": "https://www.aldi.es/images/products/24356.jpg",
+      "categoryId": "lacteos",
+      "available": true
+    },
+    {
+      "id": "24357",
+      "ean": "4056489956044",
+      "name": "Leche semidesnatada ALDI 1 l",
+      "brand": "ALDI",
+      "price": 0.59,
+      "pricePerUnit": 0.59,
+      "unitLabel": "l",
+      "currency": "EUR",
+      "imageUrl": "https://www.aldi.es/images/products/24357.jpg",
+      "categoryId": "lacteos",
+      "available": true
+    },
+    {
+      "id": "24358",
+      "ean": "4056489956051",
+      "name": "Yogur natural ALDI pack 4 x 125 g",
+      "brand": "ALDI",
+      "price": 0.49,
+      "pricePerUnit": 0.98,
+      "unitLabel": "kg",
+      "currency": "EUR",
+      "imageUrl": "https://www.aldi.es/images/products/24358.jpg",
+      "categoryId": "lacteos",
+      "available": true
+    }
+  ],
+  "totalElements": 3,
+  "totalPages": 1,
+  "number": 0,
+  "size": 48
+}
+

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "frescos",
+    "name": "Frescos",
+    "imageUrl": "https://www.aldi.es/images/cat-frescos.jpg",
+    "subcategories": [
+      {
+        "id": "frutas-y-verduras",
+        "name": "Frutas y verduras",
+        "imageUrl": "https://www.aldi.es/images/cat-frutas.jpg"
+      },
+      {
+        "id": "lacteos",
+        "name": "Lácteos y huevos",
+        "imageUrl": "https://www.aldi.es/images/cat-lacteos.jpg"
+      }
+    ]
+  },
+  {
+    "id": "bebidas",
+    "name": "Bebidas",
+    "imageUrl": "https://www.aldi.es/images/cat-bebidas.jpg",
+    "subcategories": [
+      {
+        "id": "agua",
+        "name": "Agua",
+        "imageUrl": "https://www.aldi.es/images/cat-agua.jpg"
+      }
+    ]
+  }
+]
+
