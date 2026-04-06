@@ -1,8 +1,9 @@
 package com.n1b3lung0.supermarkets.comparison.infrastructure.config;
 
-import com.n1b3lung0.supermarkets.comparison.application.port.input.query.CompareProductsByNameUseCase;
 import com.n1b3lung0.supermarkets.comparison.application.query.CompareProductsByNameHandler;
+import com.n1b3lung0.supermarkets.comparison.infrastructure.adapter.cache.CachingCompareProductsByNameUseCase;
 import com.n1b3lung0.supermarkets.comparison.infrastructure.adapter.output.persistence.ProductComparisonJdbcAdapter;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -16,9 +17,15 @@ public class ComparisonConfig {
     return new ProductComparisonJdbcAdapter(jdbcClient);
   }
 
+  /**
+   * Caching decorator that wraps the real handler. It implements {@link
+   * com.n1b3lung0.supermarkets.comparison.application.port.input.query.CompareProductsByNameUseCase}
+   * so it satisfies both the controller injection and the cache-eviction listener injection.
+   */
   @Bean
-  public CompareProductsByNameUseCase compareProductsByNameUseCase(
-      ProductComparisonJdbcAdapter adapter) {
-    return new CompareProductsByNameHandler(adapter);
+  public CachingCompareProductsByNameUseCase compareProductsByNameUseCase(
+      ProductComparisonJdbcAdapter adapter, CacheManager cacheManager) {
+    return new CachingCompareProductsByNameUseCase(
+        new CompareProductsByNameHandler(adapter), cacheManager);
   }
 }

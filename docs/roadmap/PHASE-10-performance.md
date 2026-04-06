@@ -12,7 +12,7 @@
 
 ---
 
-### Step 81 ⬜ — Add Redis cache for comparison queries
+### Step 81 ✅ — Add Redis cache for comparison queries
 - Add `spring-boot-starter-data-redis` to `libs.versions.toml`
 - Add Redis service to `compose.yaml`
 - Create `shared/infrastructure/config/CacheConfig.java` with TTL per cache name:
@@ -22,14 +22,14 @@
 - Cache `GetProductByIdHandler` with key `product:{id}`
 - **Verify:** integration test asserting cache hit/miss; `./gradlew bootRun` with Redis running
 
-### Step 82 ⬜ — Add cache eviction on product sync
+### Step 82 ✅ — Add cache eviction on product sync
 - When `ProductSynced` or `ProductDeactivated` domain event is published, evict the relevant cache entries
 - Create `product/infrastructure/adapter/input/event/ProductCacheEvictionListener.java`
   - `@EventListener` on `ProductSynced` → evict `product:{id}` + clear `compare` cache
   - `@EventListener` on `ProductDeactivated` → evict `product:{id}`
 - **Verify:** unit test asserting cache eviction called on each event type
 
-### Step 83 ⬜ — Add database indexes for common queries
+### Step 83 ✅ — Add database indexes for common queries
 - Create `V12__add_performance_indexes.sql`:
   ```sql
   CREATE INDEX idx_products_supermarket_category ON products (supermarket_id, category_id)
@@ -41,7 +41,7 @@
   ```
 - **Verify:** migration runs; `EXPLAIN ANALYZE` on comparison query shows index usage
 
-### Step 84 ⬜ — Partition product_prices table (time-based)
+### Step 84 ✅ — Partition product_prices table (time-based)
 - Create `V13__partition_product_prices_by_month.sql`:
   - Convert `product_prices` to a `PARTITION BY RANGE (recorded_at)` table
   - Create initial monthly partitions for current + next 12 months
@@ -49,7 +49,7 @@
   - Called at the start of each sync to create the next month's partition if it doesn't exist
 - **Verify:** migration runs; existing data accessible; new prices insert into correct partition
 
-### Step 85 ⬜ — Evaluate and document read scaling options
+### Step 85 ✅ — Evaluate and document read scaling options
 - Create `docs/architecture/read-scaling-options.md` comparing:
   - **PostgreSQL + Redis** (current): good for < 1M products × 6 supermarkets
   - **Read replicas**: offload comparison queries to replica
@@ -68,9 +68,8 @@
 - Add refresh call in `SyncSupermarketCatalogHandler.complete()`
 - **Verify:** comparison query response time < 100ms with 100k products seed data
 
-### Step 86 ⬜ — Add Testcontainers-based performance smoke test
+### Step 86 ✅ — Add Testcontainers-based performance smoke test
 - Seed 10,000 products across 6 supermarkets using a Flyway test-only migration
 - Assert `GET /api/v1/compare?q=leche` responds in < 200ms (measured with `StopWatch`)
 - Assert `GET /api/v1/products/{id}` responds in < 50ms (cache hit)
 - **Verify:** test passes on CI
-

@@ -11,7 +11,8 @@ import org.springframework.jdbc.core.simple.JdbcClient;
 
 /**
  * JDBC adapter for the product comparison query. Uses {@link JdbcClient} (Spring 6.1+) with a
- * native SQL query that joins products with their latest price using {@code DISTINCT ON}.
+ * native SQL query that joins products with the {@code latest_product_prices} materialized view
+ * (created in V14). This replaces the LATERAL subquery used before V14.
  *
  * <p>The query uses {@code ILIKE} which benefits from the pg_trgm GIN index created in V9.
  */
@@ -32,13 +33,7 @@ public class ProductComparisonJdbcAdapter implements ProductComparisonQueryPort 
           pp.recorded_at
       FROM products p
       JOIN supermarkets s ON s.id = p.supermarket_id AND s.deleted_at IS NULL
-      JOIN LATERAL (
-          SELECT unit_price, bulk_price, reference_price, reference_format, currency, recorded_at
-          FROM product_prices
-          WHERE product_id = p.id
-          ORDER BY recorded_at DESC
-          LIMIT 1
-      ) pp ON true
+      JOIN latest_product_prices pp ON pp.product_id = p.id
       WHERE p.is_active = true
         AND p.deleted_at IS NULL
         AND p.name ILIKE :term

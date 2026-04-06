@@ -25,6 +25,8 @@ import com.n1b3lung0.supermarkets.product.domain.model.Product;
 import com.n1b3lung0.supermarkets.product.domain.model.ProductId;
 import com.n1b3lung0.supermarkets.supermarket.domain.model.SupermarketId;
 import com.n1b3lung0.supermarkets.sync.application.dto.SyncSupermarketCatalogCommand;
+import com.n1b3lung0.supermarkets.sync.application.port.output.LatestPricesRefreshPort;
+import com.n1b3lung0.supermarkets.sync.application.port.output.PartitionMaintenancePort;
 import com.n1b3lung0.supermarkets.sync.application.port.output.SyncRunRepositoryPort;
 import com.n1b3lung0.supermarkets.sync.application.port.output.scraper.CategoryScraperPort;
 import com.n1b3lung0.supermarkets.sync.application.port.output.scraper.ProductScraperPort;
@@ -47,6 +49,8 @@ class SyncSupermarketCatalogHandlerTest {
   private CategoryRepositoryPort categoryRepository;
   private ProductRepositoryPort productRepository;
   private SyncRunRepositoryPort syncRunRepository;
+  private PartitionMaintenancePort partitionMaintenance;
+  private LatestPricesRefreshPort latestPricesRefresh;
   private SyncSupermarketCatalogHandler handler;
 
   private static final UUID SUPERMARKET_UUID =
@@ -68,6 +72,8 @@ class SyncSupermarketCatalogHandlerTest {
     categoryRepository = mock(CategoryRepositoryPort.class);
     productRepository = mock(ProductRepositoryPort.class);
     syncRunRepository = mock(SyncRunRepositoryPort.class);
+    partitionMaintenance = mock(PartitionMaintenancePort.class);
+    latestPricesRefresh = mock(LatestPricesRefreshPort.class);
     handler =
         new SyncSupermarketCatalogHandler(
             List.of(categoryScraper),
@@ -77,7 +83,9 @@ class SyncSupermarketCatalogHandlerTest {
             deactivateProduct,
             categoryRepository,
             productRepository,
-            syncRunRepository);
+            syncRunRepository,
+            partitionMaintenance,
+            latestPricesRefresh);
   }
 
   private RegisterCategoryCommand stubCategoryCommand(String externalId, String level) {
@@ -279,7 +287,9 @@ class SyncSupermarketCatalogHandlerTest {
             deactivateProduct,
             categoryRepository,
             productRepository,
-            syncRunRepository);
+            syncRunRepository,
+            partitionMaintenance,
+            latestPricesRefresh);
 
     multiHandler.execute(COMMAND);
 
@@ -305,7 +315,9 @@ class SyncSupermarketCatalogHandlerTest {
             deactivateProduct,
             categoryRepository,
             productRepository,
-            syncRunRepository);
+            syncRunRepository,
+            partitionMaintenance,
+            latestPricesRefresh);
 
     var runId = noMatchHandler.execute(COMMAND);
 

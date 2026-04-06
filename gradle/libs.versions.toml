@@ -22,6 +22,8 @@ spring-boot-jpa             = { module = "org.springframework.boot:spring-boot-s
 spring-boot-validation      = { module = "org.springframework.boot:spring-boot-starter-validation" }
 spring-boot-actuator        = { module = "org.springframework.boot:spring-boot-starter-actuator" }
 spring-boot-devtools        = { module = "org.springframework.boot:spring-boot-devtools" }
+spring-boot-redis           = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
+spring-boot-cache           = { module = "org.springframework.boot:spring-boot-starter-cache" }
 
 # Database
 spring-boot-flyway          = { module = "org.springframework.boot:spring-boot-flyway",      version.ref = "spring-boot" }

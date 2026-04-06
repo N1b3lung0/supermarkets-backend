@@ -1,12 +1,12 @@
 package com.n1b3lung0.supermarkets.product.infrastructure.config;
 
+import com.n1b3lung0.supermarkets.comparison.infrastructure.adapter.cache.CachingCompareProductsByNameUseCase;
 import com.n1b3lung0.supermarkets.product.application.command.DeactivateProductHandler;
 import com.n1b3lung0.supermarkets.product.application.command.RecordProductPriceHandler;
 import com.n1b3lung0.supermarkets.product.application.command.UpsertProductHandler;
 import com.n1b3lung0.supermarkets.product.application.port.input.command.DeactivateProductUseCase;
 import com.n1b3lung0.supermarkets.product.application.port.input.command.RecordProductPriceUseCase;
 import com.n1b3lung0.supermarkets.product.application.port.input.command.UpsertProductUseCase;
-import com.n1b3lung0.supermarkets.product.application.port.input.query.GetProductByIdUseCase;
 import com.n1b3lung0.supermarkets.product.application.port.input.query.GetProductPriceHistoryUseCase;
 import com.n1b3lung0.supermarkets.product.application.port.input.query.ListProductsByCategoryUseCase;
 import com.n1b3lung0.supermarkets.product.application.port.input.query.ListProductsBySupermarketUseCase;
@@ -14,12 +14,15 @@ import com.n1b3lung0.supermarkets.product.application.query.GetProductByIdHandle
 import com.n1b3lung0.supermarkets.product.application.query.GetProductPriceHistoryHandler;
 import com.n1b3lung0.supermarkets.product.application.query.ListProductsByCategoryHandler;
 import com.n1b3lung0.supermarkets.product.application.query.ListProductsBySupermarketHandler;
+import com.n1b3lung0.supermarkets.product.infrastructure.adapter.cache.CachingGetProductByIdUseCase;
+import com.n1b3lung0.supermarkets.product.infrastructure.adapter.input.event.ProductCacheEvictionListener;
 import com.n1b3lung0.supermarkets.product.infrastructure.adapter.output.persistence.ProductJpaAdapter;
 import com.n1b3lung0.supermarkets.product.infrastructure.adapter.output.persistence.ProductPriceJpaAdapter;
 import com.n1b3lung0.supermarkets.product.infrastructure.adapter.output.persistence.mapper.ProductPersistenceMapper;
 import com.n1b3lung0.supermarkets.product.infrastructure.adapter.output.persistence.mapper.ProductPricePersistenceMapper;
 import com.n1b3lung0.supermarkets.product.infrastructure.adapter.output.persistence.repository.SpringProductPriceRepository;
 import com.n1b3lung0.supermarkets.product.infrastructure.adapter.output.persistence.repository.SpringProductRepository;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -72,8 +75,10 @@ public class ProductConfig {
   }
 
   @Bean
-  public GetProductByIdUseCase getProductByIdUseCase(ProductJpaAdapter productAdapter) {
-    return new GetProductByIdHandler(productAdapter);
+  public CachingGetProductByIdUseCase getProductByIdUseCase(
+      ProductJpaAdapter productAdapter, CacheManager cacheManager) {
+    return new CachingGetProductByIdUseCase(
+        new GetProductByIdHandler(productAdapter), cacheManager);
   }
 
   @Bean
@@ -92,5 +97,12 @@ public class ProductConfig {
   public GetProductPriceHistoryUseCase getProductPriceHistoryUseCase(
       ProductPriceJpaAdapter priceAdapter) {
     return new GetProductPriceHistoryHandler(priceAdapter);
+  }
+
+  @Bean
+  public ProductCacheEvictionListener productCacheEvictionListener(
+      CachingGetProductByIdUseCase getProductByIdUseCase,
+      CachingCompareProductsByNameUseCase compareProductsByNameUseCase) {
+    return new ProductCacheEvictionListener(getProductByIdUseCase, compareProductsByNameUseCase);
   }
 }

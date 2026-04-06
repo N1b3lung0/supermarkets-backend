@@ -3,6 +3,7 @@ package com.n1b3lung0.supermarkets.product.infrastructure.adapter.output.persist
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -11,6 +12,7 @@ import java.util.UUID;
 /** JPA entity for the product_prices table. Append-only — rows are never updated. */
 @Entity
 @Table(name = "product_prices")
+@IdClass(ProductPriceEntityId.class)
 public class ProductPriceEntity {
 
   @Id private UUID id;
@@ -84,6 +86,7 @@ public class ProductPriceEntity {
   @Column(name = "currency", nullable = false, length = 3)
   private String currency;
 
+  @Id
   @Column(name = "recorded_at", nullable = false)
   private Instant recordedAt;
 
