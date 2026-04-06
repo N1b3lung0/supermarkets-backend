@@ -1,0 +1,27 @@
+{
+  "products": [
+    {
+      "id": "8480017028469",
+      "name": "Leche entera DIA 1 l",
+      "brand": "DIA",
+      "price": 0.63,
+      "currency": "EUR",
+      "imageUrl": "https://www.dia.es/images/8480017028469.jpg",
+      "categoryId": "lacteos-frescos"
+    },
+    {
+      "id": "8480017028470",
+      "name": "Leche desnatada DIA 1 l",
+      "brand": "DIA",
+      "price": 0.57,
+      "currency": "EUR",
+      "imageUrl": "https://www.dia.es/images/8480017028470.jpg",
+      "categoryId": "lacteos-frescos"
+    }
+  ],
+  "page": 0,
+  "size": 48,
+  "totalElements": 2,
+  "totalPages": 1
+}
+

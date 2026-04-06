@@ -1,0 +1,20 @@
+{
+  "subcategories": [
+    {
+      "id": "alimentacion",
+      "name": "Alimentación",
+      "subcategories": [
+        { "id": "lacteos", "name": "Lácteos y huevos" },
+        { "id": "conservas", "name": "Conservas y precocinados" }
+      ]
+    },
+    {
+      "id": "bebidas",
+      "name": "Bebidas",
+      "subcategories": [
+        { "id": "agua-bebidas", "name": "Agua y refrescos" }
+      ]
+    }
+  ]
+}
+
