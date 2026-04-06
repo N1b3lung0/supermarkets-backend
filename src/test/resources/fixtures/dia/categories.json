@@ -1,0 +1,18 @@
+[
+  {
+    "id": "frescos",
+    "name": "Frescos",
+    "children": [
+      { "id": "lacteos-frescos", "name": "Lácteos" },
+      { "id": "frutas-verduras", "name": "Frutas y verduras" }
+    ]
+  },
+  {
+    "id": "bebidas",
+    "name": "Bebidas",
+    "children": [
+      { "id": "agua-refrescos", "name": "Agua y refrescos" }
+    ]
+  }
+]
+

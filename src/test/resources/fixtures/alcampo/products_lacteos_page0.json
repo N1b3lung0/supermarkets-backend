@@ -1,0 +1,20 @@
+{
+  "pagination": { "currentPage": 0, "pageSize": 48, "totalPages": 1, "totalResults": 2 },
+  "products": [
+    {
+      "code": "3560070462858",
+      "name": "Leche entera Auchan 1 l",
+      "categories": [{ "code": "lacteos" }],
+      "price": { "value": 0.75, "currencyIso": "EUR" },
+      "images": [{ "url": "/medias/3560070462858.jpg" }]
+    },
+    {
+      "code": "3560070462859",
+      "name": "Leche desnatada Auchan 1 l",
+      "categories": [{ "code": "lacteos" }],
+      "price": { "value": 0.69, "currencyIso": "EUR" },
+      "images": [{ "url": "/medias/3560070462859.jpg" }]
+    }
+  ]
+}
+

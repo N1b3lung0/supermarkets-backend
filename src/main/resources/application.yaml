@@ -46,6 +46,15 @@ app:
     aldi:
       base-url: https://www.aldi.es
       request-timeout: 15s
+    lidl:
+      base-url: https://www.lidl.es
+      request-timeout: 15s
+    alcampo:
+      base-url: https://www.alcampo.es
+      request-timeout: 15s
+    dia:
+      base-url: https://www.dia.es
+      request-timeout: 15s
   scheduler:
     sync:
       enabled: true
