@@ -38,6 +38,10 @@ dependencies {
     implementation(libs.bundles.spring.data)
     runtimeOnly(libs.postgresql)
 
+    // Cache (Spring Cache abstraction + Redis)
+    implementation(libs.spring.boot.cache)
+    implementation(libs.spring.boot.redis)
+
     // OpenAPI / Swagger
     implementation(libs.springdoc.openapi)
 

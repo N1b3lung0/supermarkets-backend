@@ -23,6 +23,17 @@ spring:
     baseline-on-migrate: false
     validate-on-migrate: true
 
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000   # default 1 hour (ms)
+      cache-null-values: false
+
 server:
   port: ${SERVER_PORT:8080}
 
@@ -58,3 +69,6 @@ app:
   scheduler:
     sync:
       enabled: true
+  cache:
+    compare-ttl-seconds: 3600
+    product-ttl-seconds: 1800

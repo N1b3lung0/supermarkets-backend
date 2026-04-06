@@ -4,6 +4,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+  # Use simple in-memory cache for tests — no Redis needed
+  cache:
+    type: simple
 
 app:
   scraper:

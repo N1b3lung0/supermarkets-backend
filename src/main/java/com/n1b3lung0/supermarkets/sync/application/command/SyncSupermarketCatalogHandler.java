@@ -13,6 +13,8 @@ import com.n1b3lung0.supermarkets.product.domain.model.ExternalProductId;
 import com.n1b3lung0.supermarkets.supermarket.domain.model.SupermarketId;
 import com.n1b3lung0.supermarkets.sync.application.dto.SyncSupermarketCatalogCommand;
 import com.n1b3lung0.supermarkets.sync.application.port.input.command.SyncSupermarketCatalogUseCase;
+import com.n1b3lung0.supermarkets.sync.application.port.output.LatestPricesRefreshPort;
+import com.n1b3lung0.supermarkets.sync.application.port.output.PartitionMaintenancePort;
 import com.n1b3lung0.supermarkets.sync.application.port.output.SyncRunRepositoryPort;
 import com.n1b3lung0.supermarkets.sync.application.port.output.scraper.CategoryScraperPort;
 import com.n1b3lung0.supermarkets.sync.application.port.output.scraper.ProductScraperPort;
@@ -49,6 +51,8 @@ public class SyncSupermarketCatalogHandler implements SyncSupermarketCatalogUseC
   private final CategoryRepositoryPort categoryRepository;
   private final ProductRepositoryPort productRepository;
   private final SyncRunRepositoryPort syncRunRepository;
+  private final PartitionMaintenancePort partitionMaintenance;
+  private final LatestPricesRefreshPort latestPricesRefresh;
 
   public SyncSupermarketCatalogHandler(
       List<CategoryScraperPort> categoryScrapers,
@@ -58,7 +62,9 @@ public class SyncSupermarketCatalogHandler implements SyncSupermarketCatalogUseC
       DeactivateProductUseCase deactivateProduct,
       CategoryRepositoryPort categoryRepository,
       ProductRepositoryPort productRepository,
-      SyncRunRepositoryPort syncRunRepository) {
+      SyncRunRepositoryPort syncRunRepository,
+      PartitionMaintenancePort partitionMaintenance,
+      LatestPricesRefreshPort latestPricesRefresh) {
     this.categoryScrapers = List.copyOf(categoryScrapers);
     this.productScrapers = List.copyOf(productScrapers);
     this.registerCategory = registerCategory;
@@ -67,6 +73,8 @@ public class SyncSupermarketCatalogHandler implements SyncSupermarketCatalogUseC
     this.categoryRepository = categoryRepository;
     this.productRepository = productRepository;
     this.syncRunRepository = syncRunRepository;
+    this.partitionMaintenance = partitionMaintenance;
+    this.latestPricesRefresh = latestPricesRefresh;
   }
 
   private CategoryScraperPort findCategoryScraper(SupermarketId supermarketId) {
@@ -97,6 +105,11 @@ public class SyncSupermarketCatalogHandler implements SyncSupermarketCatalogUseC
     syncRunRepository.save(syncRun);
 
     try {
+      // ------------------------------------------------------------------
+      // 0. Ensure partition for next month exists (prevents INSERT failures)
+      // ------------------------------------------------------------------
+      partitionMaintenance.ensureNextMonthPartitionExists();
+
       // ------------------------------------------------------------------
       // 1. Sync categories
       // ------------------------------------------------------------------
@@ -178,6 +191,11 @@ public class SyncSupermarketCatalogHandler implements SyncSupermarketCatalogUseC
       // ------------------------------------------------------------------
       syncRun.complete(categoriesSynced, productsSynced, productsDeactivated);
       syncRunRepository.save(syncRun);
+
+      // ------------------------------------------------------------------
+      // 6. Refresh materialized view for comparison queries
+      // ------------------------------------------------------------------
+      latestPricesRefresh.refresh();
 
       log.info(
           "[Sync] Completed for supermarket {}: categories={}, products={}, deactivated={}",
