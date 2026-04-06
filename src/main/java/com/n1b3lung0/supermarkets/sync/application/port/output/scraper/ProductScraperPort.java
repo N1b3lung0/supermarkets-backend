@@ -13,6 +13,9 @@ import java.util.Map;
  */
 public interface ProductScraperPort {
 
+  /** Returns {@code true} when this adapter can handle the given supermarket. */
+  boolean supports(SupermarketId supermarketId);
+
   /**
    * Calls the supermarket API for the given level-1 subcategory and returns one {@link
    * UpsertProductCommand} per product found across all leaf groups.

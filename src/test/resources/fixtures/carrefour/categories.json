@@ -1,0 +1,53 @@
+{
+  "components": [
+    {
+      "uid": "CategoryNavigationComponent",
+      "typeCode": "CategoryNavigationComponent",
+      "navigationNode": {
+        "uid": "SupermarketNavigationNode",
+        "entries": [],
+        "children": [
+          {
+            "uid": "alimentacion",
+            "localizedTitle": "Alimentación",
+            "url": "/supermercado/alimentacion/c/alimentacion",
+            "children": [
+              {
+                "uid": "lacteos",
+                "localizedTitle": "Lácteos y huevos",
+                "url": "/supermercado/lacteos-y-huevos/c/lacteos",
+                "children": []
+              },
+              {
+                "uid": "pan-bolleria",
+                "localizedTitle": "Pan y bollería",
+                "url": "/supermercado/pan-y-bolleria/c/pan-bolleria",
+                "children": []
+              }
+            ]
+          },
+          {
+            "uid": "bebidas",
+            "localizedTitle": "Bebidas",
+            "url": "/supermercado/bebidas/c/bebidas",
+            "children": [
+              {
+                "uid": "agua",
+                "localizedTitle": "Agua",
+                "url": "/supermercado/agua/c/agua",
+                "children": []
+              },
+              {
+                "uid": "zumos",
+                "localizedTitle": "Zumos y néctar",
+                "url": "/supermercado/zumos/c/zumos",
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+

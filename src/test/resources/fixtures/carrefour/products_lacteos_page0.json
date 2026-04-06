@@ -1,0 +1,74 @@
+{
+  "pagination": {
+    "currentPage": 0,
+    "pageSize": 48,
+    "totalPages": 1,
+    "totalResults": 3
+  },
+  "products": [
+    {
+      "code": "8480017178466",
+      "name": "Leche entera Carrefour 1 l",
+      "url": "/supermercado/leche-entera-carrefour-1-l/p/8480017178466",
+      "price": {
+        "value": 0.89,
+        "currencyIso": "EUR",
+        "formattedValue": "0,89 €"
+      },
+      "pricePerUnit": {
+        "value": 0.89,
+        "unit": "l",
+        "formattedValue": "0,89 €/l"
+      },
+      "categories": [
+        { "code": "lacteos", "name": "Lácteos y huevos" }
+      ],
+      "images": [
+        { "url": "/medias/8480017178466.jpg", "format": "product" }
+      ]
+    },
+    {
+      "code": "8480017095114",
+      "name": "Leche desnatada Carrefour 1 l",
+      "url": "/supermercado/leche-desnatada-carrefour-1-l/p/8480017095114",
+      "price": {
+        "value": 0.79,
+        "currencyIso": "EUR",
+        "formattedValue": "0,79 €"
+      },
+      "pricePerUnit": {
+        "value": 0.79,
+        "unit": "l",
+        "formattedValue": "0,79 €/l"
+      },
+      "categories": [
+        { "code": "lacteos", "name": "Lácteos y huevos" }
+      ],
+      "images": [
+        { "url": "/medias/8480017095114.jpg", "format": "product" }
+      ]
+    },
+    {
+      "code": "8480017309006",
+      "name": "Yogur natural Carrefour pack 4 x 125 g",
+      "url": "/supermercado/yogur-natural-carrefour-p/8480017309006",
+      "price": {
+        "value": 0.65,
+        "currencyIso": "EUR",
+        "formattedValue": "0,65 €"
+      },
+      "pricePerUnit": {
+        "value": 1.30,
+        "unit": "kg",
+        "formattedValue": "1,30 €/kg"
+      },
+      "categories": [
+        { "code": "lacteos", "name": "Lácteos y huevos" }
+      ],
+      "images": [
+        { "url": "/medias/8480017309006.jpg", "format": "product" }
+      ]
+    }
+  ]
+}
+

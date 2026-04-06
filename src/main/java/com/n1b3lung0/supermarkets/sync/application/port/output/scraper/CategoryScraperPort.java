@@ -10,6 +10,9 @@ import java.util.List;
  */
 public interface CategoryScraperPort {
 
+  /** Returns {@code true} when this adapter can handle the given supermarket. */
+  boolean supports(SupermarketId supermarketId);
+
   /**
    * Returns commands for all 3 levels of categories (TOP → SUB → LEAF). The list is ordered
    * parents-before-children so callers can persist them in order.

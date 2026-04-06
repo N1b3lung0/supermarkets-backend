@@ -40,6 +40,9 @@ app:
     mercadona:
       base-url: https://tienda.mercadona.es/api
       request-timeout: 10s
+    carrefour:
+      base-url: https://www.carrefour.es
+      request-timeout: 15s
   scheduler:
     sync:
       enabled: true
