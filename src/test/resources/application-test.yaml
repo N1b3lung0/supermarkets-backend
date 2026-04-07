@@ -7,6 +7,14 @@ spring:
   # Use simple in-memory cache for tests — no Redis needed
   cache:
     type: simple
+  # Suppress OIDC discovery from issuer-uri at startup.
+  # JwtDecoder is replaced by @MockBean in @WebMvcTest security tests;
+  # full @SpringBootTest tests never validate JWTs so this stub is never called.
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:0/oauth2/jwks
 
 app:
   scraper:

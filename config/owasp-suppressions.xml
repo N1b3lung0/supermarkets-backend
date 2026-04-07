@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+
+    <!--
+        OWASP Dependency Check — known false positives / accepted risks.
+
+        Template for adding a suppression:
+
+        <suppress>
+            <notes>CVE-XXXX-XXXXX — false positive: affects version X.Y.Z; we use version A.B.C</notes>
+            <cve>CVE-XXXX-XXXXX</cve>
+        </suppress>
+
+        Or by file pattern:
+        <suppress>
+            <notes>Test-only dep — not in production classpath</notes>
+            <filePath regex="true">.*testcontainers.*\.jar</filePath>
+            <cve>CVE-XXXX-XXXXX</cve>
+        </suppress>
+    -->
+
+</suppressions>
+

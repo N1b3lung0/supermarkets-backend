@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.springBoot)
     alias(libs.plugins.springDependency)
     alias(libs.plugins.spotless)
+    alias(libs.plugins.owaspDependencyCheck)
 }
 
 group = "com.n1b3lung0"
@@ -42,6 +43,10 @@ dependencies {
     implementation(libs.spring.boot.cache)
     implementation(libs.spring.boot.redis)
 
+    // Security (stateless JWT / OAuth2 Resource Server)
+    implementation(libs.spring.boot.security)
+    implementation(libs.spring.security.oauth2)
+
     // OpenAPI / Swagger
     implementation(libs.springdoc.openapi)
 
@@ -64,6 +69,7 @@ dependencies {
     // Testing
     testImplementation(libs.bundles.testing)
     testImplementation(libs.bundles.testcontainers)
+    testImplementation(libs.spring.security.test)
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -128,4 +134,15 @@ checkstyle {
     configFile = file("config/checkstyle/checkstyle.xml")
     isIgnoreFailures = false
     maxWarnings = 0
+}
+
+// OWASP Dependency Check — run manually via: ./gradlew dependencyCheckAnalyze
+// Not included in the default 'check' lifecycle to keep CI fast; run on a nightly schedule.
+dependencyCheck {
+    failBuildOnCVSS = 7.0f
+    suppressionFile = "config/owasp-suppressions.xml"
+    formats = listOf("HTML", "JSON")
+    outputDirectory = "build/reports/dependency-check"
+    // Exclude test-only dependencies from vulnerability scanning
+    scanConfigurations = listOf("runtimeClasspath")
 }
