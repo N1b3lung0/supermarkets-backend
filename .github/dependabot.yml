@@ -1,0 +1,51 @@
+version: 2
+
+updates:
+  # ---------------------------------------------------------------------------
+  # Gradle dependencies — checks libs.versions.toml + build.gradle.kts
+  # ---------------------------------------------------------------------------
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "08:00"
+      timezone: "Europe/Madrid"
+    open-pull-requests-limit: 5
+    groups:
+      spring:
+        patterns:
+          - "org.springframework*"
+          - "io.spring*"
+      testing:
+        patterns:
+          - "org.junit*"
+          - "org.mockito*"
+          - "org.testcontainers*"
+          - "com.tngtech*"
+      observability:
+        patterns:
+          - "io.micrometer*"
+          - "net.logstash*"
+          - "io.opentelemetry*"
+      security:
+        patterns:
+          - "org.owasp*"
+    labels:
+      - dependencies
+      - gradle
+
+  # ---------------------------------------------------------------------------
+  # GitHub Actions — keeps action versions up to date
+  # ---------------------------------------------------------------------------
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "08:00"
+      timezone: "Europe/Madrid"
+    labels:
+      - dependencies
+      - github-actions
+
