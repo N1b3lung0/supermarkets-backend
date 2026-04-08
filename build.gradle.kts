@@ -142,7 +142,7 @@ dependencyCheck {
     failBuildOnCVSS = 7.0f
     suppressionFile = "config/owasp-suppressions.xml"
     formats = listOf("HTML", "JSON")
-    outputDirectory = "build/reports/dependency-check"
+    outputDirectory.set(layout.buildDirectory.dir("reports/dependency-check"))
     // Exclude test-only dependencies from vulnerability scanning
     scanConfigurations = listOf("runtimeClasspath")
 }
