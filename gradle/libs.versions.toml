@@ -14,7 +14,7 @@ logstash-encoder        = "8.0"
 springdoc               = "2.8.6"
 postgresql              = "42.7.5"
 shedlock                = "6.9.0"
-owasp-dependency-check  = "10.0.4"
+owasp-dependency-check  = "12.2.0"
 
 [libraries]
 # Spring Boot starters (no version — managed by BOM)
