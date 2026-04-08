@@ -16,12 +16,14 @@ import com.n1b3lung0.supermarkets.product.application.query.ListProductsByCatego
 import com.n1b3lung0.supermarkets.product.application.query.ListProductsBySupermarketHandler;
 import com.n1b3lung0.supermarkets.product.infrastructure.adapter.cache.CachingGetProductByIdUseCase;
 import com.n1b3lung0.supermarkets.product.infrastructure.adapter.input.event.ProductCacheEvictionListener;
+import com.n1b3lung0.supermarkets.product.infrastructure.adapter.metrics.MeteredRecordProductPriceUseCase;
 import com.n1b3lung0.supermarkets.product.infrastructure.adapter.output.persistence.ProductJpaAdapter;
 import com.n1b3lung0.supermarkets.product.infrastructure.adapter.output.persistence.ProductPriceJpaAdapter;
 import com.n1b3lung0.supermarkets.product.infrastructure.adapter.output.persistence.mapper.ProductPersistenceMapper;
 import com.n1b3lung0.supermarkets.product.infrastructure.adapter.output.persistence.mapper.ProductPricePersistenceMapper;
 import com.n1b3lung0.supermarkets.product.infrastructure.adapter.output.persistence.repository.SpringProductPriceRepository;
 import com.n1b3lung0.supermarkets.product.infrastructure.adapter.output.persistence.repository.SpringProductRepository;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,8 +61,10 @@ public class ProductConfig {
   }
 
   @Bean
-  public RecordProductPriceUseCase recordProductPriceUseCase(ProductPriceJpaAdapter priceAdapter) {
-    return new RecordProductPriceHandler(priceAdapter);
+  public RecordProductPriceUseCase recordProductPriceUseCase(
+      ProductPriceJpaAdapter priceAdapter, MeterRegistry meterRegistry) {
+    return new MeteredRecordProductPriceUseCase(
+        new RecordProductPriceHandler(priceAdapter), meterRegistry);
   }
 
   @Bean

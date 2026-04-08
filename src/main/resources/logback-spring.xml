@@ -19,10 +19,10 @@
     </springProfile>
 
     <springProfile name="local,test">
-        <!-- Local / test: human-readable console logs -->
+        <!-- Local / test: human-readable console logs with traceId/spanId -->
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
-                <pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) [%cyan(%thread)] %yellow(%logger{36}) - %msg%n</pattern>
+                <pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) [%cyan(%thread)] [%yellow(trace=%mdc{traceId:-} span=%mdc{spanId:-})] %yellow(%logger{36}) - %msg%n</pattern>
             </encoder>
         </appender>
 

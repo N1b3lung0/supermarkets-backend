@@ -31,6 +31,7 @@ import com.n1b3lung0.supermarkets.sync.application.port.output.SyncRunRepository
 import com.n1b3lung0.supermarkets.sync.application.port.output.scraper.CategoryScraperPort;
 import com.n1b3lung0.supermarkets.sync.application.port.output.scraper.ProductScraperPort;
 import com.n1b3lung0.supermarkets.sync.domain.model.SyncStatus;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -85,7 +86,8 @@ class SyncSupermarketCatalogHandlerTest {
             productRepository,
             syncRunRepository,
             partitionMaintenance,
-            latestPricesRefresh);
+            latestPricesRefresh,
+            new SimpleMeterRegistry());
   }
 
   private RegisterCategoryCommand stubCategoryCommand(String externalId, String level) {
@@ -289,7 +291,8 @@ class SyncSupermarketCatalogHandlerTest {
             productRepository,
             syncRunRepository,
             partitionMaintenance,
-            latestPricesRefresh);
+            latestPricesRefresh,
+            new SimpleMeterRegistry());
 
     multiHandler.execute(COMMAND);
 
@@ -317,7 +320,8 @@ class SyncSupermarketCatalogHandlerTest {
             productRepository,
             syncRunRepository,
             partitionMaintenance,
-            latestPricesRefresh);
+            latestPricesRefresh,
+            new SimpleMeterRegistry());
 
     var runId = noMatchHandler.execute(COMMAND);
 

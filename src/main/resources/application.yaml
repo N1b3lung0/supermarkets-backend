@@ -51,6 +51,18 @@ management:
   endpoint:
     health:
       show-details: when_authorized
+  tracing:
+    sampling:
+      probability: 1.0   # 100% in dev; tune down in production
+
+otel:
+  exporter:
+    otlp:
+      endpoint: http://${OTEL_COLLECTOR_HOST:localhost}:${OTEL_COLLECTOR_PORT:4318}
+  resource:
+    attributes:
+      service.name: ${spring.application.name}
+      deployment.environment: ${SPRING_PROFILES_ACTIVE:local}
 
 app:
   scraper:
