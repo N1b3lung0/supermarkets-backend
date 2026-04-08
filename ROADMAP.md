@@ -36,7 +36,7 @@ All conventions follow [`CLAUDE.md`](CLAUDE.md). Every step produces **working, 
 | **Phase 9** — Additional Scrapers | [PHASE-09-additional-scrapers.md](docs/roadmap/PHASE-09-additional-scrapers.md) | 74–80 | ✅ |
 | **Phase 10** — Performance & Data | [PHASE-10-performance.md](docs/roadmap/PHASE-10-performance.md) | 81–86 | ✅ |
 | **Phase 11** — Security | [PHASE-11-security.md](docs/roadmap/PHASE-11-security.md) | 87–88 | ✅ |
-| **Phase 12** — Observability | [PHASE-12-observability.md](docs/roadmap/PHASE-12-observability.md) | 89–91 | ⬜ |
+| **Phase 12** — Observability | [PHASE-12-observability.md](docs/roadmap/PHASE-12-observability.md) | 89–91 | ✅ |
 | **Phase 13** — CI/CD Pipeline | [PHASE-13-cicd.md](docs/roadmap/PHASE-13-cicd.md) | 92–96 | ⬜ |
 | **Phase 14** — Polish & Docs | [PHASE-14-polish.md](docs/roadmap/PHASE-14-polish.md) | 97–101 | ⬜ |
 

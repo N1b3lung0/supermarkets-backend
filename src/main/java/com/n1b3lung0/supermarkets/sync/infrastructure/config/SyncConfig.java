@@ -16,6 +16,7 @@ import com.n1b3lung0.supermarkets.sync.infrastructure.adapter.output.persistence
 import com.n1b3lung0.supermarkets.sync.infrastructure.adapter.output.persistence.SyncRunJpaAdapter;
 import com.n1b3lung0.supermarkets.sync.infrastructure.adapter.output.persistence.mapper.SyncRunPersistenceMapper;
 import com.n1b3lung0.supermarkets.sync.infrastructure.adapter.output.persistence.repository.SpringSyncRunRepository;
+import io.micrometer.core.instrument.MeterRegistry;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -60,7 +61,8 @@ public class SyncConfig {
       ProductRepositoryPort productRepositoryPort,
       SyncRunJpaAdapter syncRunJpaAdapter,
       PartitionMaintenancePort partitionMaintenancePort,
-      LatestPricesRefreshPort latestPricesRefreshPort) {
+      LatestPricesRefreshPort latestPricesRefreshPort,
+      MeterRegistry meterRegistry) {
     return new SyncSupermarketCatalogHandler(
         categoryScrapers,
         productScrapers,
@@ -71,6 +73,7 @@ public class SyncConfig {
         productRepositoryPort,
         syncRunJpaAdapter,
         partitionMaintenancePort,
-        latestPricesRefreshPort);
+        latestPricesRefreshPort,
+        meterRegistry);
   }
 }

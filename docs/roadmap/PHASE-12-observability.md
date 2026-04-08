@@ -12,7 +12,7 @@
 
 ---
 
-### Step 89 ⬜ — Add business metrics to key handlers
+### Step 89 ✅ — Add business metrics to key handlers
 - `SyncSupermarketCatalogHandler`:
   - `sync.products.synced.total{supermarket}` (counter)
   - `sync.categories.synced.total{supermarket}` (counter)
@@ -24,14 +24,14 @@
   - `prices.recorded.total{supermarket}` (counter)
 - **Verify:** `GET /actuator/metrics` returns the new metric names after triggering operations
 
-### Step 90 ⬜ — Add Prometheus + Grafana to compose.yaml
+### Step 90 ✅ — Add Prometheus + Grafana to compose.yaml
 - Add `prom/prometheus:latest` service to `compose.yaml`
 - Add `config/prometheus.yml` with scrape config pointing to `app:8080/actuator/prometheus`
 - Add `grafana/grafana:latest` service to `compose.yaml` with provisioned datasource + dashboard
 - Import a basic Grafana dashboard JSON (`config/grafana/dashboards/supermarkets.json`) for JVM + business metrics
 - **Verify:** `docker compose up -d` → Prometheus at `localhost:9090` scrapes metrics; Grafana dashboard at `localhost:3000` shows data
 
-### Step 91 ⬜ — Add distributed tracing (OpenTelemetry)
+### Step 91 ✅ — Add distributed tracing (OpenTelemetry)
 - Add `otel-collector` (or Jaeger all-in-one) to `compose.yaml`
 - Configure `micrometer-tracing` OTLP exporter in `application.yaml`:
   ```yaml

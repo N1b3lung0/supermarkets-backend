@@ -20,6 +20,8 @@ import com.n1b3lung0.supermarkets.sync.application.port.output.scraper.CategoryS
 import com.n1b3lung0.supermarkets.sync.application.port.output.scraper.ProductScraperPort;
 import com.n1b3lung0.supermarkets.sync.domain.model.SyncRun;
 import com.n1b3lung0.supermarkets.sync.domain.model.SyncRunId;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,6 +55,7 @@ public class SyncSupermarketCatalogHandler implements SyncSupermarketCatalogUseC
   private final SyncRunRepositoryPort syncRunRepository;
   private final PartitionMaintenancePort partitionMaintenance;
   private final LatestPricesRefreshPort latestPricesRefresh;
+  private final MeterRegistry meterRegistry;
 
   public SyncSupermarketCatalogHandler(
       List<CategoryScraperPort> categoryScrapers,
@@ -64,7 +67,8 @@ public class SyncSupermarketCatalogHandler implements SyncSupermarketCatalogUseC
       ProductRepositoryPort productRepository,
       SyncRunRepositoryPort syncRunRepository,
       PartitionMaintenancePort partitionMaintenance,
-      LatestPricesRefreshPort latestPricesRefresh) {
+      LatestPricesRefreshPort latestPricesRefresh,
+      MeterRegistry meterRegistry) {
     this.categoryScrapers = List.copyOf(categoryScrapers);
     this.productScrapers = List.copyOf(productScrapers);
     this.registerCategory = registerCategory;
@@ -75,6 +79,7 @@ public class SyncSupermarketCatalogHandler implements SyncSupermarketCatalogUseC
     this.syncRunRepository = syncRunRepository;
     this.partitionMaintenance = partitionMaintenance;
     this.latestPricesRefresh = latestPricesRefresh;
+    this.meterRegistry = Objects.requireNonNull(meterRegistry, "meterRegistry is required");
   }
 
   private CategoryScraperPort findCategoryScraper(SupermarketId supermarketId) {
@@ -104,6 +109,7 @@ public class SyncSupermarketCatalogHandler implements SyncSupermarketCatalogUseC
     var syncRun = SyncRun.start(supermarketId);
     syncRunRepository.save(syncRun);
 
+    var sample = Timer.start(meterRegistry);
     try {
       // ------------------------------------------------------------------
       // 0. Ensure partition for next month exists (prevents INSERT failures)
@@ -197,6 +203,22 @@ public class SyncSupermarketCatalogHandler implements SyncSupermarketCatalogUseC
       // ------------------------------------------------------------------
       latestPricesRefresh.refresh();
 
+      // ------------------------------------------------------------------
+      // 7. Record metrics
+      // ------------------------------------------------------------------
+      var smTag = supermarketId.value().toString();
+      meterRegistry
+          .counter("sync.categories.synced.total", "supermarket", smTag)
+          .increment(categoriesSynced);
+      meterRegistry
+          .counter("sync.products.synced.total", "supermarket", smTag)
+          .increment(productsSynced);
+      sample.stop(
+          Timer.builder("sync.duration.seconds")
+              .tag("supermarket", smTag)
+              .tag("status", "success")
+              .register(meterRegistry));
+
       log.info(
           "[Sync] Completed for supermarket {}: categories={}, products={}, deactivated={}",
           supermarketId.value(),
@@ -208,6 +230,11 @@ public class SyncSupermarketCatalogHandler implements SyncSupermarketCatalogUseC
       log.error("[Sync] Failed for supermarket {}: {}", supermarketId.value(), ex.getMessage(), ex);
       syncRun.fail(ex.getMessage());
       syncRunRepository.save(syncRun);
+      sample.stop(
+          Timer.builder("sync.duration.seconds")
+              .tag("supermarket", supermarketId.value().toString())
+              .tag("status", "failed")
+              .register(meterRegistry));
     }
 
     return syncRun.getId();
