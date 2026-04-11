@@ -12,11 +12,12 @@ Built with **Java 25 + Spring Boot 4**, applying **Hexagonal Architecture**, **D
 1. [Tech Stack](#tech-stack)
 2. [Architecture](#architecture)
 3. [Local Setup](#local-setup)
-4. [Running Tests](#running-tests)
-5. [API Reference](#api-reference)
-6. [Observability](#observability)
-7. [CI / CD](#ci--cd)
-8. [Project Docs](#project-docs)
+4. [Populating the Database](#populating-the-database)
+5. [Running Tests](#running-tests)
+6. [API Reference](#api-reference)
+7. [Observability](#observability)
+8. [CI / CD](#ci--cd)
+9. [Project Docs](#project-docs)
 
 ---
 
@@ -158,6 +159,68 @@ This starts:
 | Metrics      | `http://localhost:8080/actuator/prometheus` |
 
 > Flyway applies all migrations automatically on startup. No manual DB setup needed.
+
+---
+
+## Populating the Database
+
+### Instant demo data (no action needed)
+
+Migration `V15__demo_data.sql` seeds **16 products** across Mercadona, Carrefour and ALDI with
+real-looking prices. Available immediately after the first `./gradlew bootRun`. Try it:
+
+```bash
+# No auth required for read-only comparison
+curl -s 'http://localhost:8080/api/v1/compare?q=leche' | jq
+curl -s 'http://localhost:8080/api/v1/compare?q=aceite' | jq
+```
+
+### Trigger real scraper syncs (Mercadona + 5 others)
+
+The sync endpoint requires a JWT. The `mock-oauth2-server` service in `compose.yaml` issues
+valid tokens at `http://localhost:9000/default/token` — it starts with the rest of the stack.
+
+#### 1 — Obtain a token
+
+```bash
+TOKEN=$(curl -s -X POST http://localhost:9000/default/token \
+  -d 'grant_type=client_credentials' | jq -r .access_token)
+echo $TOKEN   # paste into Swagger UI "Authorize" if needed
+```
+
+#### 2 — Trigger a sync
+
+```bash
+# Mercadona (UUID from V3 seed migration)
+curl -s -X POST http://localhost:8080/api/v1/sync/supermarkets/00000000-0000-0000-0000-000000000001 \
+  -H "Authorization: Bearer $TOKEN"
+
+# All 6 supermarkets at once — helper script
+./scripts/sync-supermarket.sh                    # all
+./scripts/sync-supermarket.sh mercadona          # single
+./scripts/sync-supermarket.sh mercadona carrefour aldi
+```
+
+| Supermarket | UUID                                   |
+|-------------|----------------------------------------|
+| Mercadona   | `00000000-0000-0000-0000-000000000001` |
+| Carrefour   | `00000000-0000-0000-0000-000000000002` |
+| Alcampo     | `00000000-0000-0000-0000-000000000003` |
+| ALDI        | `00000000-0000-0000-0000-000000000004` |
+| LIDL        | `00000000-0000-0000-0000-000000000005` |
+| DIA         | `00000000-0000-0000-0000-000000000006` |
+
+#### 3 — Check sync status
+
+```bash
+curl -s "http://localhost:8080/api/v1/sync/runs?supermarketId=00000000-0000-0000-0000-000000000001" \
+  -H "Authorization: Bearer $TOKEN" | jq '.content[0].status'
+```
+
+#### Automatic daily sync
+
+`DailySyncScheduler` runs every night at **03:00 Europe/Madrid** (ShedLock-protected) and
+re-syncs all enabled supermarkets automatically. No manual action needed in production.
 
 ---
 

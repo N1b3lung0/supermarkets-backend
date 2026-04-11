@@ -38,7 +38,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${JWT_ISSUER_URI:http://localhost:9000}
+          issuer-uri: ${JWT_ISSUER_URI:http://localhost:9000/default}
 
 server:
   port: ${SERVER_PORT:8080}
