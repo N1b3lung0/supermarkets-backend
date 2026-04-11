@@ -11,6 +11,7 @@ import com.n1b3lung0.supermarkets.product.application.port.input.query.ListProdu
 import com.n1b3lung0.supermarkets.shared.application.mapper.PageResponseMapper;
 import com.n1b3lung0.supermarkets.shared.domain.model.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,17 +45,27 @@ public class ProductController {
   @Operation(summary = "Get a product by ID (includes latest price)")
   @ApiResponses({
     @ApiResponse(responseCode = "200", description = "Product found"),
+    @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token"),
     @ApiResponse(responseCode = "404", description = "Product not found")
   })
-  public ProductDetailView getById(@PathVariable UUID id) {
+  public ProductDetailView getById(
+      @Parameter(description = "Product UUID", example = "3fa85f64-5717-4562-b3fc-2c963f66afa6")
+          @PathVariable
+          UUID id) {
     return getByIdUseCase.execute(new GetProductByIdQuery(id));
   }
 
   @GetMapping("/api/v1/supermarkets/{supermarketId}/products")
   @Operation(summary = "List products by supermarket (paginated)")
-  @ApiResponse(responseCode = "200", description = "Page of products")
+  @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "Page of products"),
+    @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token"),
+    @ApiResponse(responseCode = "404", description = "Supermarket not found")
+  })
   public PageResponse<ProductSummaryView> listBySupermarket(
-      @PathVariable UUID supermarketId,
+      @Parameter(description = "Supermarket UUID", example = "00000000-0000-0000-0000-000000000001")
+          @PathVariable
+          UUID supermarketId,
       @PageableDefault(size = 20, sort = "name", direction = Sort.Direction.ASC)
           Pageable pageable) {
     return PageResponseMapper.from(
@@ -64,9 +75,15 @@ public class ProductController {
 
   @GetMapping("/api/v1/categories/{categoryId}/products")
   @Operation(summary = "List products by category (paginated)")
-  @ApiResponse(responseCode = "200", description = "Page of products")
+  @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "Page of products"),
+    @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token"),
+    @ApiResponse(responseCode = "404", description = "Category not found")
+  })
   public PageResponse<ProductSummaryView> listByCategory(
-      @PathVariable UUID categoryId,
+      @Parameter(description = "Category UUID", example = "3fa85f64-5717-4562-b3fc-2c963f66afa6")
+          @PathVariable
+          UUID categoryId,
       @PageableDefault(size = 20, sort = "name", direction = Sort.Direction.ASC)
           Pageable pageable) {
     return PageResponseMapper.from(

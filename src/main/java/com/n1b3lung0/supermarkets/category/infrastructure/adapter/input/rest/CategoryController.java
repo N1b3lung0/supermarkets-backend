@@ -12,6 +12,7 @@ import com.n1b3lung0.supermarkets.category.infrastructure.adapter.input.rest.dto
 import com.n1b3lung0.supermarkets.shared.application.mapper.PageResponseMapper;
 import com.n1b3lung0.supermarkets.shared.domain.model.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -53,6 +54,7 @@ public class CategoryController {
   @Operation(summary = "Register a new category")
   @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Category registered"),
+    @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token"),
     @ApiResponse(
         responseCode = "409",
         description = "Category externalId already exists for supermarket"),
@@ -75,18 +77,36 @@ public class CategoryController {
   @Operation(summary = "Get a category by ID")
   @ApiResponses({
     @ApiResponse(responseCode = "200", description = "Category found"),
+    @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token"),
     @ApiResponse(responseCode = "404", description = "Category not found")
   })
-  public CategoryDetailView getById(@PathVariable UUID id) {
+  public CategoryDetailView getById(
+      @Parameter(description = "Category UUID", example = "3fa85f64-5717-4562-b3fc-2c963f66afa6")
+          @PathVariable
+          UUID id) {
     return getByIdUseCase.execute(new GetCategoryByIdQuery(id));
   }
 
   @GetMapping
   @Operation(summary = "List categories (paginated), optionally filtered by supermarket / level")
-  @ApiResponse(responseCode = "200", description = "Page of categories")
+  @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "Page of categories"),
+    @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token")
+  })
   public PageResponse<CategorySummaryView> list(
-      @RequestParam(required = false) UUID supermarketId,
-      @RequestParam(required = false) String levelType,
+      @Parameter(
+              description = "Filter by supermarket UUID",
+              example = "00000000-0000-0000-0000-000000000001")
+          @RequestParam(required = false)
+          UUID supermarketId,
+      @Parameter(
+              description = "Filter by hierarchy level: TOP, SUB or LEAF",
+              example = "TOP",
+              schema =
+                  @io.swagger.v3.oas.annotations.media.Schema(
+                      allowableValues = {"TOP", "SUB", "LEAF"}))
+          @RequestParam(required = false)
+          String levelType,
       @PageableDefault(size = 20, sort = "sortOrder", direction = Sort.Direction.ASC)
           Pageable pageable) {
     return PageResponseMapper.from(

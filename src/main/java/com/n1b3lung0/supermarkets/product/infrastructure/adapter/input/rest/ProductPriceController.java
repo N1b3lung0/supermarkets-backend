@@ -6,7 +6,9 @@ import com.n1b3lung0.supermarkets.product.application.port.input.query.GetProduc
 import com.n1b3lung0.supermarkets.shared.application.mapper.PageResponseMapper;
 import com.n1b3lung0.supermarkets.shared.domain.model.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.UUID;
 import org.springframework.data.domain.Pageable;
@@ -30,10 +32,21 @@ public class ProductPriceController {
   }
 
   @GetMapping
-  @Operation(summary = "Get price history for a product (newest first)")
-  @ApiResponse(responseCode = "200", description = "Page of price snapshots")
+  @Operation(
+      summary = "Get price history for a product (newest first)",
+      description =
+          "Returns a paginated, time-ordered list of all price snapshots recorded for the"
+              + " given product. Each snapshot includes the price, currency, unit, and the"
+              + " timestamp when it was recorded.")
+  @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "Page of price snapshots"),
+    @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token"),
+    @ApiResponse(responseCode = "404", description = "Product not found")
+  })
   public PageResponse<ProductPriceView> getHistory(
-      @PathVariable UUID productId,
+      @Parameter(description = "Product UUID", example = "3fa85f64-5717-4562-b3fc-2c963f66afa6")
+          @PathVariable
+          UUID productId,
       @PageableDefault(size = 30, sort = "recordedAt", direction = Sort.Direction.DESC)
           Pageable pageable) {
     return PageResponseMapper.from(
