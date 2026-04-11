@@ -49,15 +49,31 @@ public class RegisterCategoryHandler implements RegisterCategoryUseCase {
   private CategoryLevel buildLevel(RegisterCategoryCommand command) {
     return switch (command.levelType().toUpperCase()) {
       case "TOP" -> new CategoryLevel.Top();
-      case "SUB" ->
-          new CategoryLevel.Sub(
-              CategoryId.of(
-                  Objects.requireNonNull(command.parentId(), "parentId required for SUB level")));
-      case "LEAF" ->
-          new CategoryLevel.Leaf(
-              CategoryId.of(
-                  Objects.requireNonNull(command.parentId(), "parentId required for LEAF level")));
+      case "SUB" -> new CategoryLevel.Sub(resolveParentId(command));
+      case "LEAF" -> new CategoryLevel.Leaf(resolveParentId(command));
       default -> throw new IllegalArgumentException("Unknown levelType: " + command.levelType());
     };
+  }
+
+  /**
+   * Resolves the internal {@link CategoryId} of the parent category by looking it up via its
+   * external (supermarket-assigned) ID. Used for SUB and LEAF levels.
+   */
+  private CategoryId resolveParentId(RegisterCategoryCommand command) {
+    var extId =
+        Objects.requireNonNull(
+            command.parentExternalId(),
+            "parentExternalId required for " + command.levelType() + " level");
+    var supermarketId = SupermarketId.of(command.supermarketId());
+    return repository
+        .findByExternalIdAndSupermarketId(ExternalCategoryId.of(extId), supermarketId)
+        .map(Category::getId)
+        .orElseThrow(
+            () ->
+                new IllegalStateException(
+                    "Parent category not found for externalId="
+                        + extId
+                        + ", supermarketId="
+                        + command.supermarketId()));
   }
 }

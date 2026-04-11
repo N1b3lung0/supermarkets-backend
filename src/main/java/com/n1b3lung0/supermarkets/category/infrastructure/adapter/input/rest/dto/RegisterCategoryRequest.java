@@ -14,5 +14,5 @@ public record RegisterCategoryRequest(
     @NotNull UUID supermarketId,
     @NotNull @Pattern(regexp = "TOP|SUB|LEAF", message = "levelType must be TOP, SUB or LEAF")
         String levelType,
-    UUID parentId,
+    @Size(max = 50) String parentExternalId,
     @PositiveOrZero int order) {}

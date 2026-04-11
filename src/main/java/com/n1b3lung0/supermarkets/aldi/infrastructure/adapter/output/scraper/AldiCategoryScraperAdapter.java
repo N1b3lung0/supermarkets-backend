@@ -65,12 +65,7 @@ public class AldiCategoryScraperAdapter implements CategoryScraperPort {
       for (var sub : subs) {
         commands.add(
             new RegisterCategoryCommand(
-                sub.name(),
-                sub.id(),
-                supermarketId.value(),
-                "SUB",
-                null, // parentId UUID resolved after TOP categories are persisted
-                2));
+                sub.name(), sub.id(), supermarketId.value(), "SUB", top.id(), 2));
       }
     }
 

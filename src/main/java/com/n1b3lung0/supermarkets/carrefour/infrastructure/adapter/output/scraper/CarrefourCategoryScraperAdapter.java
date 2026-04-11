@@ -71,7 +71,7 @@ public class CarrefourCategoryScraperAdapter implements CategoryScraperPort {
     for (var top : topNodes) {
       commands.add(mapper.toTopCommand(top, supermarketId));
       for (var sub : top.children()) {
-        commands.add(mapper.toSubCommand(sub, supermarketId));
+        commands.add(mapper.toSubCommand(sub, supermarketId, top.uid()));
       }
     }
 

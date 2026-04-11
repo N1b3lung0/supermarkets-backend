@@ -59,7 +59,7 @@ public class MercadonaCategoryScraperAdapter implements CategoryScraperPort {
         try {
           var detail = getLevel1Detail(sub.id());
           for (var leaf : detail.categories()) {
-            commands.add(mapper.toLeafCommand(leaf, supermarketId, null));
+            commands.add(mapper.toLeafCommand(leaf, supermarketId, String.valueOf(sub.id())));
           }
         } catch (RestClientException ex) {
           log.warn("Failed to fetch subcategory id={}: {}", sub.id(), ex.getMessage());

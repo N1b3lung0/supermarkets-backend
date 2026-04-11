@@ -11,6 +11,11 @@ import static org.mockito.Mockito.when;
 import com.n1b3lung0.supermarkets.category.application.dto.RegisterCategoryCommand;
 import com.n1b3lung0.supermarkets.category.application.port.output.CategoryRepositoryPort;
 import com.n1b3lung0.supermarkets.category.domain.exception.DuplicateCategoryException;
+import com.n1b3lung0.supermarkets.category.domain.model.Category;
+import com.n1b3lung0.supermarkets.category.domain.model.CategoryId;
+import com.n1b3lung0.supermarkets.category.domain.model.ExternalCategoryId;
+import com.n1b3lung0.supermarkets.supermarket.domain.model.SupermarketId;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,11 +55,17 @@ class RegisterCategoryHandlerTest {
   }
 
   @Test
-  void execute_shouldBuildSubLevel_withParentId() {
-    when(repository.existsByExternalIdAndSupermarketId(any(), any())).thenReturn(false);
+  void execute_shouldBuildSubLevel_withParentExternalId() {
     var supermarketId = UUID.randomUUID();
-    var parentId = UUID.randomUUID();
-    var command = new RegisterCategoryCommand("Frutas", "101", supermarketId, "SUB", parentId, 1);
+    var parentExternalId = "10";
+    var parentCategory = mock(Category.class);
+    when(parentCategory.getId()).thenReturn(CategoryId.generate());
+    when(repository.existsByExternalIdAndSupermarketId(any(), any())).thenReturn(false);
+    when(repository.findByExternalIdAndSupermarketId(
+            ExternalCategoryId.of(parentExternalId), SupermarketId.of(supermarketId)))
+        .thenReturn(Optional.of(parentCategory));
+    var command =
+        new RegisterCategoryCommand("Frutas", "101", supermarketId, "SUB", parentExternalId, 1);
 
     var id = handler.execute(command);
 
