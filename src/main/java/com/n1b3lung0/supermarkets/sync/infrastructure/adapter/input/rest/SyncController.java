@@ -1,5 +1,6 @@
 package com.n1b3lung0.supermarkets.sync.infrastructure.adapter.input.rest;
 
+import com.n1b3lung0.supermarkets.shared.application.mapper.PageResponseMapper;
 import com.n1b3lung0.supermarkets.shared.domain.model.PageResponse;
 import com.n1b3lung0.supermarkets.sync.application.dto.SyncRunView;
 import com.n1b3lung0.supermarkets.sync.application.dto.SyncSupermarketCatalogCommand;
@@ -54,6 +55,6 @@ public class SyncController {
       @RequestParam UUID supermarketId,
       @PageableDefault(size = 20, sort = "startedAt", direction = Sort.Direction.DESC)
           Pageable pageable) {
-    return PageResponse.from(syncRunQueryPort.findBySupermarketId(supermarketId, pageable));
+    return PageResponseMapper.from(syncRunQueryPort.findBySupermarketId(supermarketId, pageable));
   }
 }

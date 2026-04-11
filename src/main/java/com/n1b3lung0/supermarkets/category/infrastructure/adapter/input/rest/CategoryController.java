@@ -9,6 +9,7 @@ import com.n1b3lung0.supermarkets.category.application.port.input.command.Regist
 import com.n1b3lung0.supermarkets.category.application.port.input.query.GetCategoryByIdUseCase;
 import com.n1b3lung0.supermarkets.category.application.port.input.query.ListCategoriesUseCase;
 import com.n1b3lung0.supermarkets.category.infrastructure.adapter.input.rest.dto.RegisterCategoryRequest;
+import com.n1b3lung0.supermarkets.shared.application.mapper.PageResponseMapper;
 import com.n1b3lung0.supermarkets.shared.domain.model.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -88,7 +89,7 @@ public class CategoryController {
       @RequestParam(required = false) String levelType,
       @PageableDefault(size = 20, sort = "sortOrder", direction = Sort.Direction.ASC)
           Pageable pageable) {
-    return PageResponse.from(
+    return PageResponseMapper.from(
         listUseCase.execute(new ListCategoriesQuery(supermarketId, levelType, pageable)));
   }
 }
