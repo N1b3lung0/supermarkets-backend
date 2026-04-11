@@ -8,6 +8,7 @@ import com.n1b3lung0.supermarkets.product.application.dto.ProductSummaryView;
 import com.n1b3lung0.supermarkets.product.application.port.input.query.GetProductByIdUseCase;
 import com.n1b3lung0.supermarkets.product.application.port.input.query.ListProductsByCategoryUseCase;
 import com.n1b3lung0.supermarkets.product.application.port.input.query.ListProductsBySupermarketUseCase;
+import com.n1b3lung0.supermarkets.shared.application.mapper.PageResponseMapper;
 import com.n1b3lung0.supermarkets.shared.domain.model.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -56,7 +57,7 @@ public class ProductController {
       @PathVariable UUID supermarketId,
       @PageableDefault(size = 20, sort = "name", direction = Sort.Direction.ASC)
           Pageable pageable) {
-    return PageResponse.from(
+    return PageResponseMapper.from(
         listBySupermarketUseCase.execute(
             new ListProductsBySupermarketQuery(supermarketId, pageable)));
   }
@@ -68,7 +69,7 @@ public class ProductController {
       @PathVariable UUID categoryId,
       @PageableDefault(size = 20, sort = "name", direction = Sort.Direction.ASC)
           Pageable pageable) {
-    return PageResponse.from(
+    return PageResponseMapper.from(
         listByCategoryUseCase.execute(new ListProductsByCategoryQuery(categoryId, pageable)));
   }
 }

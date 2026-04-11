@@ -12,7 +12,7 @@
 
 ---
 
-### Step 97 ⬜ — Write README.md
+### Step 97 ✅ — Write README.md
 - Project overview, tech stack, local setup (Docker Compose), running tests, API endpoints summary, architecture diagram (ASCII or Mermaid)
 - **Verify:** a fresh clone can run the app by following README steps alone
 

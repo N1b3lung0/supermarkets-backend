@@ -3,6 +3,7 @@ package com.n1b3lung0.supermarkets.product.infrastructure.adapter.input.rest;
 import com.n1b3lung0.supermarkets.product.application.dto.GetProductPriceHistoryQuery;
 import com.n1b3lung0.supermarkets.product.application.dto.ProductPriceView;
 import com.n1b3lung0.supermarkets.product.application.port.input.query.GetProductPriceHistoryUseCase;
+import com.n1b3lung0.supermarkets.shared.application.mapper.PageResponseMapper;
 import com.n1b3lung0.supermarkets.shared.domain.model.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,7 +36,7 @@ public class ProductPriceController {
       @PathVariable UUID productId,
       @PageableDefault(size = 30, sort = "recordedAt", direction = Sort.Direction.DESC)
           Pageable pageable) {
-    return PageResponse.from(
+    return PageResponseMapper.from(
         historyUseCase.execute(new GetProductPriceHistoryQuery(productId, pageable)));
   }
 }
