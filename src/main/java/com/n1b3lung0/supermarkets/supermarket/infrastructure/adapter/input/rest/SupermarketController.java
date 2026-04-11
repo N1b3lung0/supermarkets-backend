@@ -11,6 +11,7 @@ import com.n1b3lung0.supermarkets.supermarket.application.port.input.query.GetSu
 import com.n1b3lung0.supermarkets.supermarket.application.port.input.query.ListSupermarketsUseCase;
 import com.n1b3lung0.supermarkets.supermarket.infrastructure.adapter.input.rest.dto.RegisterSupermarketRequest;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -51,6 +52,7 @@ public class SupermarketController {
   @Operation(summary = "Register a new supermarket")
   @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Supermarket registered"),
+    @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token"),
     @ApiResponse(responseCode = "409", description = "Supermarket name already exists"),
     @ApiResponse(responseCode = "422", description = "Validation failed")
   })
@@ -64,15 +66,22 @@ public class SupermarketController {
   @Operation(summary = "Get a supermarket by ID")
   @ApiResponses({
     @ApiResponse(responseCode = "200", description = "Supermarket found"),
+    @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token"),
     @ApiResponse(responseCode = "404", description = "Supermarket not found")
   })
-  public SupermarketDetailView getById(@PathVariable UUID id) {
+  public SupermarketDetailView getById(
+      @Parameter(description = "Supermarket UUID", example = "00000000-0000-0000-0000-000000000001")
+          @PathVariable
+          UUID id) {
     return getByIdUseCase.execute(new GetSupermarketByIdQuery(id));
   }
 
   @GetMapping
   @Operation(summary = "List all supermarkets (paginated)")
-  @ApiResponse(responseCode = "200", description = "Page of supermarkets")
+  @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "Page of supermarkets"),
+    @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token")
+  })
   public PageResponse<SupermarketSummaryView> list(
       @PageableDefault(size = 20, sort = "name", direction = Sort.Direction.ASC)
           Pageable pageable) {

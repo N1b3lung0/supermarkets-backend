@@ -7,6 +7,7 @@ import com.n1b3lung0.supermarkets.sync.application.dto.SyncSupermarketCatalogCom
 import com.n1b3lung0.supermarkets.sync.application.port.input.command.SyncSupermarketCatalogUseCase;
 import com.n1b3lung0.supermarkets.sync.application.port.output.SyncRunQueryPort;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,22 +38,41 @@ public class SyncController {
     this.syncRunQueryPort = syncRunQueryPort;
   }
 
-  @Operation(summary = "Trigger a full catalog sync for a supermarket")
+  @Operation(
+      summary = "Trigger a full catalog sync for a supermarket",
+      description =
+          "Fetches the latest product catalogue from the supermarket's external API and"
+              + " persists categories, products, and prices. The operation runs synchronously"
+              + " — the response is returned only once the sync is complete.")
   @ApiResponses({
     @ApiResponse(responseCode = "202", description = "Sync accepted and started"),
+    @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token"),
     @ApiResponse(responseCode = "404", description = "Supermarket not found")
   })
   @PostMapping("/supermarkets/{supermarketId}")
-  public ResponseEntity<Void> triggerSync(@PathVariable UUID supermarketId) {
+  public ResponseEntity<Void> triggerSync(
+      @Parameter(
+              description = "UUID of the supermarket to sync",
+              example = "00000000-0000-0000-0000-000000000001")
+          @PathVariable
+          UUID supermarketId) {
     syncUseCase.execute(new SyncSupermarketCatalogCommand(supermarketId));
     return ResponseEntity.accepted().build();
   }
 
   @Operation(summary = "List sync runs for a supermarket")
-  @ApiResponse(responseCode = "200", description = "Paginated list of sync runs")
+  @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "Paginated list of sync runs"),
+    @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token")
+  })
   @GetMapping("/runs")
   public PageResponse<SyncRunView> listRuns(
-      @RequestParam UUID supermarketId,
+      @Parameter(
+              description = "UUID of the supermarket whose sync history is requested",
+              example = "00000000-0000-0000-0000-000000000001",
+              required = true)
+          @RequestParam
+          UUID supermarketId,
       @PageableDefault(size = 20, sort = "startedAt", direction = Sort.Direction.DESC)
           Pageable pageable) {
     return PageResponseMapper.from(syncRunQueryPort.findBySupermarketId(supermarketId, pageable));

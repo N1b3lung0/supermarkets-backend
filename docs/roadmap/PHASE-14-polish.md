@@ -28,11 +28,12 @@
 - Assert cheapest supermarket is identified correctly based on seeded prices
 - **Verify:** test passes in CI
 
-### Step 100 ⬜ — Review and complete OpenAPI documentation
-- Ensure all controllers have `@Tag`, `@Operation`, `@ApiResponses`
-- Ensure all request DTOs have `@Schema` on fields with `description` and `example`
-- Ensure `ProblemDetail` error responses are documented
-- **Verify:** Swagger UI shows complete, accurate documentation for all endpoints; no undocumented operations
+### Step 100 ✅ — Review and complete OpenAPI documentation
+- Ensure all controllers have `@Tag`, `@Operation`, `@ApiResponses` — ✅ all 7 controllers fully annotated
+- Ensure all request DTOs have `@Schema` on fields with `description` and `example` — ✅ all request records annotated
+- Added JWT Bearer security scheme to `OpenApiConfig` — "Authorize" button in Swagger UI
+- Added `V15__demo_data.sql` — 16 products across Mercadona, Carrefour, ALDI with realistic prices; `latest_product_prices` refreshed at end of migration
+- **Verify:** Swagger UI shows complete documentation; `GET /api/v1/compare?q=leche` returns results without any sync
 
 ### Step 101 ⬜ — Final architecture review
 - Run ArchUnit tests — all green

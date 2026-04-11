@@ -85,7 +85,8 @@ class ProductComparisonJdbcAdapterTest extends PostgresIntegrationTest {
 
   @Test
   void findMatchesByName_searchAceite_returnsProductsFromAllSupermarkets() {
-    var results = adapter.findMatchesByName("aceite", List.of());
+    // Scope to test-inserted supermarkets so pre-seeded demo data does not affect the count
+    var results = adapter.findMatchesByName("aceite", List.of(mercadonaId, lidlId));
 
     assertThat(results).hasSize(2);
     // sorted by price ASC
@@ -108,8 +109,9 @@ class ProductComparisonJdbcAdapterTest extends PostgresIntegrationTest {
 
   @Test
   void findMatchesByName_caseInsensitive_matchesRegardlessOfCase() {
-    var lower = adapter.findMatchesByName("aceite", List.of());
-    var upper = adapter.findMatchesByName("ACEITE", List.of());
+    // Scope to test-inserted supermarkets so pre-seeded demo data does not affect the count
+    var lower = adapter.findMatchesByName("aceite", List.of(mercadonaId, lidlId));
+    var upper = adapter.findMatchesByName("ACEITE", List.of(mercadonaId, lidlId));
     assertThat(lower).hasSameSizeAs(upper);
   }
 
