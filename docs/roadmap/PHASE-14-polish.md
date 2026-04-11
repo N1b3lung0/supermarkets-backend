@@ -22,7 +22,7 @@
 - Assert categories count, products count, prices recorded, SyncRun status = `COMPLETED`
 - **Verify:** test passes in CI
 
-### Step 99 ⬜ — Add E2E integration test: basket comparison flow
+### Step 99 ✅ — Add E2E integration test: basket comparison flow
 - Create a basket, add 3 items (matching seeded products from multiple supermarkets)
 - Call `GET /api/v1/baskets/{id}/compare`
 - Assert cheapest supermarket is identified correctly based on seeded prices
