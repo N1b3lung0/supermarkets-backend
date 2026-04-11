@@ -35,11 +35,12 @@
 - Added `V15__demo_data.sql` — 16 products across Mercadona, Carrefour, ALDI with realistic prices; `latest_product_prices` refreshed at end of migration
 - **Verify:** Swagger UI shows complete documentation; `GET /api/v1/compare?q=leche` returns results without any sync
 
-### Step 101 ⬜ — Final architecture review
-- Run ArchUnit tests — all green
-- Run `./gradlew spotlessCheck checkstyleMain` — all green
-- Review package structure against `CLAUDE.md` conventions
-- Check `shared/` for anything that belongs in a bounded context
-- Verify no circular dependencies between bounded contexts
-- **Verify:** `./gradlew build` fully green; no TODO comments left in production code
+### Step 101 ✅ — Final architecture review
+- ArchUnit tests — all green (`domainIsIsolated`, `applicationDoesNotDependOnInfrastructure`, `noSpringAnnotationsInDomainOrApplication`)
+- `./gradlew spotlessCheck checkstyleMain` — all green
+- Package structure matches `CLAUDE.md` conventions — all 14 contexts (+ `shared`) under correct feature-first hexagonal layout
+- `shared/` review — all contents are genuinely cross-cutting (exception hierarchy, `Money`, `PageResponse`, `GlobalExceptionHandler`, `SecurityConfig`, `CacheConfig`, `OpenApiConfig`)
+- Cross-context dependencies verified — no circular dependencies; all cross-context references are either ID Value Objects or application ports (documented in `AGENTS.md`)
+- Zero TODO/FIXME/HACK comments in production code
+- **Verify:** `./gradlew build` fully green ✅
 
