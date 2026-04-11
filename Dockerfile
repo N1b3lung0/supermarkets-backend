@@ -49,6 +49,7 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
 #   EnableDynamicAgentLoading — required for Micrometer/Mockito on JDK 21+
 ENTRYPOINT ["java", \
     "-XX:+UseContainerSupport", \
+    "-XX:MaxRAMPercentage=75.0", \
     "-XX:+EnableDynamicAgentLoading", \
     "--sun-misc-unsafe-memory-access=allow", \
     "-jar", "app.jar"]

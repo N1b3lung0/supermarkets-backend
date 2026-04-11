@@ -14,8 +14,8 @@ public class CarrefourCategoryMapper {
   }
 
   public RegisterCategoryCommand toSubCommand(
-      CarrefourCategoryNodeDto dto, SupermarketId supermarketId) {
+      CarrefourCategoryNodeDto dto, SupermarketId supermarketId, String parentExternalId) {
     return new RegisterCategoryCommand(
-        dto.localizedTitle(), dto.uid(), supermarketId.value(), "SUB", null, 0);
+        dto.localizedTitle(), dto.uid(), supermarketId.value(), "SUB", parentExternalId, 0);
   }
 }

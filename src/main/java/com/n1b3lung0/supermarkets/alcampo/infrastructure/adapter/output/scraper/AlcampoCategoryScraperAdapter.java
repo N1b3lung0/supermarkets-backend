@@ -56,7 +56,7 @@ public class AlcampoCategoryScraperAdapter implements CategoryScraperPort {
       commands.add(toCommand(top, supermarketId, "TOP", null, 1));
       if (top.subcategories() != null) {
         for (var sub : top.subcategories()) {
-          commands.add(toCommand(sub, supermarketId, "SUB", null, 2));
+          commands.add(toCommand(sub, supermarketId, "SUB", top.id(), 2));
         }
       }
     }
@@ -72,10 +72,10 @@ public class AlcampoCategoryScraperAdapter implements CategoryScraperPort {
       AlcampoCategoryNodeDto dto,
       SupermarketId supermarketId,
       String levelType,
-      UUID parentId,
+      String parentExternalId,
       int order) {
     return new RegisterCategoryCommand(
-        dto.name(), dto.id(), supermarketId.value(), levelType, parentId, order);
+        dto.name(), dto.id(), supermarketId.value(), levelType, parentExternalId, order);
   }
 
   private AlcampoCategoriesResponse fetchCategoryTree() {

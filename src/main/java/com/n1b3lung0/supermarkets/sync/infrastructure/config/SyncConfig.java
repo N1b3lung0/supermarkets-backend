@@ -20,6 +20,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.JdbcClient;
 
 /**
@@ -41,8 +42,8 @@ public class SyncConfig {
   }
 
   @Bean
-  public PartitionMaintenancePort partitionMaintenanceAdapter(JdbcClient jdbcClient) {
-    return new PartitionMaintenanceJdbcAdapter(jdbcClient);
+  public PartitionMaintenancePort partitionMaintenanceAdapter(JdbcTemplate jdbcTemplate) {
+    return new PartitionMaintenanceJdbcAdapter(jdbcTemplate);
   }
 
   @Bean

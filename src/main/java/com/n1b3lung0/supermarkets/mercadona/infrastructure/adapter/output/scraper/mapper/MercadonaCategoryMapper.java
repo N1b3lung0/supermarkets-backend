@@ -5,7 +5,6 @@ import com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scrape
 import com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scraper.dto.MercadonaLevel1CategoryDto;
 import com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scraper.dto.MercadonaTopCategoryDto;
 import com.n1b3lung0.supermarkets.supermarket.domain.model.SupermarketId;
-import java.util.UUID;
 
 /** Maps Mercadona category DTOs → {@link RegisterCategoryCommand}. */
 public class MercadonaCategoryMapper {
@@ -23,18 +22,18 @@ public class MercadonaCategoryMapper {
         String.valueOf(dto.id()),
         supermarketId.value(),
         "SUB",
-        null, // parentId UUID resolved by the sync handler after TOP categories are persisted
+        parentExternalId,
         dto.order());
   }
 
   public RegisterCategoryCommand toLeafCommand(
-      MercadonaLeafGroupDto dto, SupermarketId supermarketId, UUID parentCategoryId) {
+      MercadonaLeafGroupDto dto, SupermarketId supermarketId, String parentExternalId) {
     return new RegisterCategoryCommand(
         dto.name(),
         String.valueOf(dto.id()),
         supermarketId.value(),
         "LEAF",
-        parentCategoryId,
+        parentExternalId,
         dto.order());
   }
 }

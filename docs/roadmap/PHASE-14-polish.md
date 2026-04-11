@@ -16,7 +16,7 @@
 - Project overview, tech stack, local setup (Docker Compose), running tests, API endpoints summary, architecture diagram (ASCII or Mermaid)
 - **Verify:** a fresh clone can run the app by following README steps alone
 
-### Step 98 ⬜ — Add E2E integration test: full Mercadona sync
+### Step 98 ✅ — Add E2E integration test: full Mercadona sync
 - `@SpringBootTest` + Testcontainers (PostgreSQL + Redis)
 - Trigger `POST /api/v1/sync/supermarkets/{mercadonaId}` with mocked HTTP (`MockRestServiceServer`) using full fixture
 - Assert categories count, products count, prices recorded, SyncRun status = `COMPLETED`

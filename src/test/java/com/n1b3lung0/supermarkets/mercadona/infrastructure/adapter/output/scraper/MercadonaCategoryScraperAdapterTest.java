@@ -69,7 +69,7 @@ class MercadonaCategoryScraperAdapterTest {
     assertThat(commands.stream().anyMatch(c -> "SUB".equals(c.levelType()))).isTrue();
     commands.stream()
         .filter(c -> "TOP".equals(c.levelType()))
-        .forEach(c -> assertThat(c.parentId()).isNull());
+        .forEach(c -> assertThat(c.parentExternalId()).isNull());
   }
 
   @Test
@@ -83,7 +83,7 @@ class MercadonaCategoryScraperAdapterTest {
             .findFirst();
     assertThat(top12).isPresent();
     assertThat(top12.get().name()).isEqualTo("Aceite, especias y salsas");
-    assertThat(top12.get().parentId()).isNull();
+    assertThat(top12.get().parentExternalId()).isNull();
   }
 
   @Test

@@ -72,7 +72,7 @@ class CarrefourCategoryScraperAdapterTest {
     assertThat(commands.stream().anyMatch(c -> "SUB".equals(c.levelType()))).isTrue();
     commands.stream()
         .filter(c -> "TOP".equals(c.levelType()))
-        .forEach(c -> assertThat(c.parentId()).isNull());
+        .forEach(c -> assertThat(c.parentExternalId()).isNull());
   }
 
   @Test

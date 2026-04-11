@@ -53,7 +53,7 @@ public class DiaCategoryScraperAdapter implements CategoryScraperPort {
         for (var sub : top.children()) {
           commands.add(
               new RegisterCategoryCommand(
-                  sub.name(), sub.id(), supermarketId.value(), "SUB", null, 2));
+                  sub.name(), sub.id(), supermarketId.value(), "SUB", top.id(), 2));
         }
       }
     }

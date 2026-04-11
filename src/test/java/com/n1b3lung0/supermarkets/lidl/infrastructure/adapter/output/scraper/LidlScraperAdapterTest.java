@@ -57,7 +57,7 @@ class LidlScraperAdapterTest {
 
     assertThat(commands).hasSize(3);
     assertThat(commands).allMatch(c -> "TOP".equals(c.levelType()));
-    assertThat(commands).allMatch(c -> c.parentId() == null);
+    assertThat(commands).allMatch(c -> c.parentExternalId() == null);
     assertThat(commands.stream().map(c -> c.name()).toList())
         .containsExactlyInAnyOrder("Frescos y congelados", "Charcutería y quesos", "Bebidas");
   }

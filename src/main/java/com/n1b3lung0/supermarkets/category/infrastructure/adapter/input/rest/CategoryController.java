@@ -65,7 +65,7 @@ public class CategoryController {
             request.externalId(),
             request.supermarketId(),
             request.levelType(),
-            request.parentId(),
+            request.parentExternalId(),
             request.order());
     var id = registerUseCase.execute(command);
     return ResponseEntity.created(URI.create("/api/v1/categories/" + id)).build();
