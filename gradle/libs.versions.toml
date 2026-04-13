@@ -2,7 +2,7 @@
 java                    = "25"
 spring-boot             = "4.0.5"
 spring-dependency       = "1.1.7"
-flyway                  = "11.7.2"
+flyway                  = "12.3.0"
 mapstruct               = "1.6.3"
 lombok                  = "1.18.38"
 archunit                = "1.4.1"
