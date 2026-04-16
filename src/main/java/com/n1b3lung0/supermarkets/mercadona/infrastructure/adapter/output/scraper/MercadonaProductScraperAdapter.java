@@ -3,7 +3,9 @@ package com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scrap
 import com.n1b3lung0.supermarkets.category.domain.model.CategoryId;
 import com.n1b3lung0.supermarkets.category.domain.model.ExternalCategoryId;
 import com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scraper.dto.MercadonaLevel1DetailDto;
+import com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scraper.dto.MercadonaProductDetailDto;
 import com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scraper.dto.MercadonaProductInCategoryDto;
+import com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scraper.dto.MercadonaSupplierDto;
 import com.n1b3lung0.supermarkets.mercadona.infrastructure.adapter.output.scraper.mapper.MercadonaPriceInstructionsMapper;
 import com.n1b3lung0.supermarkets.product.application.dto.UpsertProductCommand;
 import com.n1b3lung0.supermarkets.shared.infrastructure.exception.ExternalServiceException;
@@ -20,8 +22,9 @@ import org.springframework.web.client.RestClientException;
 
 /**
  * Fetches all products within a level-1 subcategory and maps them to {@link UpsertProductCommand}.
- * Fields not available in the categories endpoint (ean, legalName, brand, origin, details,
- * allergens, ingredients, isBulk, isVariableWeight) are set to null.
+ * First calls GET /categories/{id} to get the product list, then enriches each product with a call
+ * to GET /products/{id} to populate ean, legalName, brand, origin, details, allergens, ingredients,
+ * isBulk and isVariableWeight.
  */
 public class MercadonaProductScraperAdapter implements ProductScraperPort {
 
@@ -50,9 +53,9 @@ public class MercadonaProductScraperAdapter implements ProductScraperPort {
       ExternalCategoryId level1ExternalId,
       Map<ExternalCategoryId, CategoryId> leafCategoryIndex) {
 
-    MercadonaLevel1DetailDto detail;
+    MercadonaLevel1DetailDto subcategoryDetail;
     try {
-      detail =
+      subcategoryDetail =
           restClient
               .get()
               .uri("/categories/{id}", level1ExternalId.value())
@@ -63,13 +66,13 @@ public class MercadonaProductScraperAdapter implements ProductScraperPort {
           "Mercadona products API", "GET /categories/" + level1ExternalId.value(), ex);
     }
 
-    if (detail == null) {
+    if (subcategoryDetail == null) {
       return List.of();
     }
 
     var commands = new ArrayList<UpsertProductCommand>();
 
-    for (var leafGroup : detail.categories()) {
+    for (var leafGroup : subcategoryDetail.categories()) {
       var leafExtId = ExternalCategoryId.of(String.valueOf(leafGroup.id()));
       var categoryId = leafCategoryIndex.get(leafExtId);
 
@@ -82,7 +85,8 @@ public class MercadonaProductScraperAdapter implements ProductScraperPort {
       }
 
       for (var product : leafGroup.products()) {
-        commands.add(toCommand(product, supermarketId, categoryId));
+        var detail = fetchProductDetail(product.id());
+        commands.add(toCommand(product, detail, supermarketId, categoryId));
       }
     }
 
@@ -95,35 +99,91 @@ public class MercadonaProductScraperAdapter implements ProductScraperPort {
     return List.copyOf(commands);
   }
 
+  private MercadonaProductDetailDto fetchProductDetail(String productId) {
+    try {
+      return restClient
+          .get()
+          .uri("/products/{id}", productId)
+          .retrieve()
+          .body(MercadonaProductDetailDto.class);
+    } catch (RestClientException ex) {
+      log.warn("Could not fetch detail for product {} — enriched fields will be null", productId);
+      return null;
+    }
+  }
+
   private UpsertProductCommand toCommand(
-      MercadonaProductInCategoryDto dto, SupermarketId supermarketId, CategoryId categoryId) {
+      MercadonaProductInCategoryDto dto,
+      MercadonaProductDetailDto detail,
+      SupermarketId supermarketId,
+      CategoryId categoryId) {
 
     var priceInstructions = priceMapper.toDomain(dto.priceInstructions());
+
+    String ean = detail != null ? detail.ean() : null;
+    String brand = detail != null ? detail.brand() : null;
+    String origin = detail != null ? detail.origin() : null;
+    boolean isBulk = detail != null && detail.isBulk();
+    boolean isVariableWeight = detail != null && detail.isVariableWeight();
+
+    String legalName = null;
+    String description = null;
+    String storageInstructions = null;
+    String usageInstructions = null;
+    String mandatoryMentions = null;
+    String productionVariant = null;
+    String dangerMentions = null;
+    List<String> supplierNames = List.of();
+
+    if (detail != null && detail.details() != null) {
+      var d = detail.details();
+      legalName = d.legalName();
+      description = d.description();
+      storageInstructions = d.storageInstructions();
+      usageInstructions = d.usageInstructions();
+      mandatoryMentions = d.mandatoryMentions();
+      productionVariant = d.productionVariant();
+      dangerMentions = d.dangerMentions();
+      if (d.suppliers() != null) {
+        supplierNames =
+            d.suppliers().stream()
+                .filter(s -> s != null && s.name() != null)
+                .map(MercadonaSupplierDto::name)
+                .toList();
+      }
+    }
+
+    String allergens = null;
+    String ingredients = null;
+    if (detail != null && detail.nutritionInformation() != null) {
+      allergens = detail.nutritionInformation().allergens();
+      ingredients = detail.nutritionInformation().ingredients();
+    }
 
     return new UpsertProductCommand(
         dto.id(),
         supermarketId.value(),
         categoryId.value(),
         dto.displayName(),
-        null,
-        null,
-        null,
-        null,
-        null,
+        legalName,
+        description,
+        brand,
+        ean,
+        origin,
         dto.packaging(),
         dto.thumbnail(),
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        List.of(),
+        storageInstructions,
+        usageInstructions,
+        mandatoryMentions,
+        productionVariant,
+        dangerMentions,
+        allergens,
+        ingredients,
+        supplierNames,
         dto.badges() != null && dto.badges().isWater(),
         dto.badges() != null && dto.badges().requiresAgeCheck(),
-        false,
-        false,
+        isBulk,
+        isVariableWeight,
         dto.limit(),
         priceInstructions);
   }

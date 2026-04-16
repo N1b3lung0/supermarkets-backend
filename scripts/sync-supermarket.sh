@@ -13,6 +13,9 @@ set -euo pipefail
 
 BASE_URL="${API_BASE_URL:-http://localhost:8080}"
 TOKEN_URL="${TOKEN_URL:-http://localhost:9000/default/token}"
+# mock-oauth2-server v2.x requires client authentication via Basic Auth.
+# Any non-empty client_id / client_secret are accepted.
+OAUTH_CLIENT="${OAUTH_CLIENT:-local-dev:secret}"
 
 # ── Supermarket registry (from V3 migration) ───────────────────────────────────
 declare -A SUPERMARKET_IDS=(
@@ -27,6 +30,7 @@ declare -A SUPERMARKET_IDS=(
 # ── Obtain a JWT from the local mock-oauth2-server ─────────────────────────────
 echo "→ Obtaining JWT from ${TOKEN_URL} ..."
 TOKEN=$(curl -s -X POST "${TOKEN_URL}" \
+  -u "${OAUTH_CLIENT}" \
   -d "grant_type=client_credentials" \
   | jq -r '.access_token')
 

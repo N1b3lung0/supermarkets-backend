@@ -1,0 +1,67 @@
+{
+  "id": "4241",
+  "ean": "8480000004241",
+  "slug": "aceite-oliva-hacendado",
+  "brand": "Hacendado",
+  "limit": 999,
+  "badges": {
+    "is_water": false,
+    "requires_age_check": false
+  },
+  "origin": "España",
+  "photos": [],
+  "status": null,
+  "details": {
+    "brand": "Hacendado",
+    "origin": "España",
+    "suppliers": [
+      { "name": "Proveedor Test S.A." }
+    ],
+    "legal_name": "Aceite de oliva 0,4º",
+    "description": "Aceite de oliva de baja acidez",
+    "danger_mentions": null,
+    "mandatory_mentions": "Conservar en lugar fresco y seco.",
+    "production_variant": null,
+    "usage_instructions": null,
+    "storage_instructions": "Conservar en lugar fresco y seco."
+  },
+  "is_bulk": false,
+  "packaging": "Botella",
+  "published": true,
+  "share_url": "https://tienda.mercadona.es/product/4241",
+  "thumbnail": "https://prod-mercadona.imgix.net/images/test.jpg?fit=crop&h=300&w=300",
+  "categories": [],
+  "display_name": "Aceite de oliva 0,4º Hacendado",
+  "unavailable_from": null,
+  "is_variable_weight": false,
+  "price_instructions": {
+    "iva": null,
+    "is_new": false,
+    "is_pack": false,
+    "pack_size": null,
+    "unit_name": "ud",
+    "unit_size": 1.0,
+    "bulk_price": "3.95",
+    "unit_price": "19.75",
+    "approx_size": false,
+    "size_format": "l",
+    "total_units": null,
+    "unit_selector": false,
+    "bunch_selector": false,
+    "drained_weight": null,
+    "selling_method": 1,
+    "tax_percentage": "0.000",
+    "price_decreased": false,
+    "reference_price": "3.950",
+    "min_bunch_amount": 1.0,
+    "reference_format": "l",
+    "previous_unit_price": null,
+    "increment_bunch_amount": 1.0
+  },
+  "unavailable_weekdays": [],
+  "nutrition_information": {
+    "allergens": null,
+    "ingredients": "Aceite de oliva"
+  }
+}
+

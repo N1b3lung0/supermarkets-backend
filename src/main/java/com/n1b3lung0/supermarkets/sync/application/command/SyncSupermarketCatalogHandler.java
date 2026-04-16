@@ -1,5 +1,6 @@
 package com.n1b3lung0.supermarkets.sync.application.command;
 
+import com.n1b3lung0.supermarkets.category.application.dto.RegisterCategoryCommand;
 import com.n1b3lung0.supermarkets.category.application.port.input.command.RegisterCategoryUseCase;
 import com.n1b3lung0.supermarkets.category.application.port.output.CategoryRepositoryPort;
 import com.n1b3lung0.supermarkets.category.domain.model.CategoryId;
@@ -28,6 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,6 +141,20 @@ public class SyncSupermarketCatalogHandler implements SyncSupermarketCatalogUseC
       }
       log.info("[Sync] Categories synced: {}", categoriesSynced);
 
+      // Derive the external IDs that were actually returned by the scraper this run.
+      // This prevents the handler from calling the API with stale / demo-data IDs that
+      // were seeded with fictional prefixes (e.g. "merc-1011") and don't exist in the API.
+      Set<String> scrapedSubExternalIds =
+          categoryCommands.stream()
+              .filter(cmd -> "SUB".equals(cmd.levelType()))
+              .map(RegisterCategoryCommand::externalId)
+              .collect(Collectors.toSet());
+      Set<String> scrapedLeafExternalIds =
+          categoryCommands.stream()
+              .filter(cmd -> "LEAF".equals(cmd.levelType()))
+              .map(RegisterCategoryCommand::externalId)
+              .collect(Collectors.toSet());
+
       // ------------------------------------------------------------------
       // 2. Build leafCategoryIndex: ExternalCategoryId → CategoryId
       // ------------------------------------------------------------------
@@ -146,14 +162,27 @@ public class SyncSupermarketCatalogHandler implements SyncSupermarketCatalogUseC
           categoryRepository.findByLevelTypeAndSupermarketId("LEAF", supermarketId);
       var leafCategoryIndex = new HashMap<ExternalCategoryId, CategoryId>();
       for (var leaf : leafCategories) {
-        leafCategoryIndex.put(leaf.getExternalId(), leaf.getId());
+        // Only include leaf categories from the current scrape; skip stale/demo entries.
+        if (scrapedLeafExternalIds.isEmpty()
+            || scrapedLeafExternalIds.contains(leaf.getExternalId().value())) {
+          leafCategoryIndex.put(leaf.getExternalId(), leaf.getId());
+        }
       }
       log.info("[Sync] Built leaf index with {} entries", leafCategoryIndex.size());
 
       // ------------------------------------------------------------------
       // 3. Sync products per SUB category
       // ------------------------------------------------------------------
-      var subCategories = categoryRepository.findByLevelTypeAndSupermarketId("SUB", supermarketId);
+      var allSubCategories =
+          categoryRepository.findByLevelTypeAndSupermarketId("SUB", supermarketId);
+      // Only iterate SUBs from the current scrape; avoids calling the external API
+      // with demo-data external IDs that do not exist in the real supermarket catalogue.
+      var subCategories =
+          scrapedSubExternalIds.isEmpty()
+              ? allSubCategories
+              : allSubCategories.stream()
+                  .filter(sub -> scrapedSubExternalIds.contains(sub.getExternalId().value()))
+                  .toList();
       log.info("[Sync] Found {} SUB categories to iterate for products", subCategories.size());
 
       var productScraper = findProductScraper(supermarketId);

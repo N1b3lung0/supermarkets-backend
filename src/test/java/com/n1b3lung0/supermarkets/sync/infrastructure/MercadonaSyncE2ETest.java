@@ -113,6 +113,15 @@ class MercadonaSyncE2ETest extends PostgresIntegrationTest {
         .expect(ExpectedCount.manyTimes(), requestTo(containsString("/categories/")))
         .andRespond(withSuccess(EMPTY_SUBCATEGORY_STUB, MediaType.APPLICATION_JSON));
 
+    //   Product detail calls: GET /products/{id} is now called once per product to enrich
+    //   fields like ean, brand, origin, etc. (34 products from subcategory 112).
+    mockServer
+        .expect(ExpectedCount.manyTimes(), requestTo(containsString("/products/")))
+        .andRespond(
+            withSuccess(
+                loadFixture("/fixtures/mercadona/product_generic_detail.json"),
+                MediaType.APPLICATION_JSON));
+
     // when — trigger the sync via the REST API
     mockMvc
         .perform(post("/api/v1/sync/supermarkets/{id}", MERCADONA_UUID).with(jwt()))

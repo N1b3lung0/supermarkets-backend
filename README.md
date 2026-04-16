@@ -184,6 +184,7 @@ valid tokens at `http://localhost:9000/default/token` — it starts with the res
 
 ```bash
 TOKEN=$(curl -s -X POST http://localhost:9000/default/token \
+  -u "local-dev:secret" \
   -d 'grant_type=client_credentials' | jq -r .access_token)
 echo $TOKEN   # paste into Swagger UI "Authorize" if needed
 ```
